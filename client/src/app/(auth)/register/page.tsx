@@ -8,12 +8,14 @@ import { useUserStore } from '@/store/useUserStore';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const loginUser = useUserStore((state) => state.loginUser);
+  const loginUser = useUserStore((state: any) => state.loginUser);
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Password strength logic
   const getPasswordStrength = () => {
@@ -45,11 +47,50 @@ export default function RegisterPage() {
     return 'Güçlü Şifre';
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    loginUser(email, fullName);
-    // Redirect to login page on successful sign-up simulation
-    router.push('/login');
+    if (!agreeTerms) {
+      setError('Kullanım koşullarını kabul etmelisiniz!');
+      return;
+    }
+    setError('');
+    setLoading(true);
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const parts = fullName.trim().split(' ');
+      const firstName = parts[0] || '';
+      const lastName = parts.slice(1).join(' ') || '';
+
+      const response = await fetch(`${apiUrl}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, firstName, lastName }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setError(data.message || 'Kayıt sırasında bir hata oluştu!');
+        setLoading(false);
+        return;
+      }
+
+      // Automatically sign them in locally on success
+      localStorage.setItem('subspace_auth_token', data.token);
+      loginUser(data.user.email, `${data.user.firstName} ${data.user.lastName}`);
+      sessionStorage.setItem('subspace_session_active', 'true');
+
+      // Redirect to dashboard
+      router.push('/');
+    } catch (err) {
+      console.error(err);
+      setError('Sunucu bağlantı hatası!');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -79,6 +120,12 @@ export default function RegisterPage() {
           <h2 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">Hesabınızı Oluşturun</h2>
           <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Hızlıca kayıt olun ve harcamalarınızı optimize etmeye başlayın.</p>
         </div>
+
+        {error && (
+          <div className="bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-450 p-3 py-2 rounded-xl text-xs font-bold leading-relaxed relative z-10">
+            {error}
+          </div>
+        )}
 
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-4 relative z-10">

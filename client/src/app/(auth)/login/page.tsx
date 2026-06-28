@@ -8,21 +8,54 @@ import { useUserStore } from '@/store/useUserStore';
 
 export default function LoginPage() {
   const router = useRouter();
-  const user = useUserStore((state) => state.user);
-  const loginUser = useUserStore((state) => state.loginUser);
-  const updateNotifications = useUserStore((state) => state.updateNotifications);
+  const user = useUserStore((state: any) => state.user);
+  const loginUser = useUserStore((state: any) => state.loginUser);
+  const updateNotifications = useUserStore((state: any) => state.updateNotifications);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState(user.email || '');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    loginUser(email, email.split('@')[0]);
-    updateNotifications({ rememberMe });
-    sessionStorage.setItem('subspace_session_active', 'true');
-    // Redirect to dashboard on login submit
-    router.push('/');
+    setError('');
+    setLoading(true);
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${apiUrl}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setError(data.message || 'Geçersiz e-posta veya şifre!');
+        setLoading(false);
+        return;
+      }
+
+      // Save auth token
+      localStorage.setItem('subspace_auth_token', data.token);
+
+      const fullName = `${data.user.firstName} ${data.user.lastName}`.trim() || data.user.email.split('@')[0];
+      loginUser(data.user.email, fullName);
+      updateNotifications({ rememberMe });
+      sessionStorage.setItem('subspace_session_active', 'true');
+      
+      router.push('/');
+    } catch (err) {
+      console.error(err);
+      setError('Sunucu bağlantı hatası!');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -103,6 +136,12 @@ export default function LoginPage() {
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 font-medium">Hesabınıza erişmek için bilgilerinizi girin.</p>
             </div>
           </div>
+
+          {error && (
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-450 p-3 py-2 rounded-xl text-xs font-bold leading-relaxed mb-4">
+              {error}
+            </div>
+          )}
 
           {/* Input form */}
           <form onSubmit={handleSubmit} className="space-y-5">
