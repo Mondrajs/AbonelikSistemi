@@ -740,8 +740,9 @@ export default function SubscriptionsListPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase">
-                  {t.nextBilling}
+                <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase flex items-center gap-1">
+                  <span>{language === 'tr' ? 'Başlangıç / Fatura Tarihi' : 'Start / Billing Date'}</span>
+                  <span className="text-rose-500 font-bold">*</span>
                 </label>
                 <input 
                   type="date" 

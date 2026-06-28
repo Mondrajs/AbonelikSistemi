@@ -16,11 +16,13 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     setLoading(true);
 
     try {
@@ -45,13 +47,16 @@ export default function LoginPage() {
       if (!response.ok) {
         try {
           const data = await response.json();
+          let msg = '';
           if (response.status === 404 || data.message === 'user_not_found') {
-            setError('Bu e-posta adresiyle kayıtlı bir hesap bulunamadı. Lütfen önce kayıt olun.');
+            msg = 'Bu e-posta adresiyle kayıtlı bir hesap bulunamadı. Lütfen önce kayıt olun.';
           } else if (response.status === 401 || data.message === 'incorrect_password') {
-            setError('Girdiğiniz şifre yanlış! Lütfen tekrar deneyin.');
+            msg = 'Girdiğiniz şifre yanlış! Lütfen tekrar deneyin.';
           } else {
-            setError(data.message || 'Geçersiz e-posta veya şifre!');
+            msg = data.message || 'Geçersiz e-posta veya şifre!';
           }
+          setError(msg);
+          alert(msg);
           setLoading(false);
           return;
         } catch (jsonErr) {
@@ -71,6 +76,7 @@ export default function LoginPage() {
       localStorage.setItem('subspace_auth_token', data.token);
 
       const fullName = `${data.user.firstName} ${data.user.lastName}`.trim() || data.user.email.split('@')[0];
+      setSuccessMessage('Giriş başarılı! Panelinize yönlendiriliyorsunuz...');
       loginUser(data.user.email, fullName);
       updateNotifications({ rememberMe });
       sessionStorage.setItem('subspace_session_active', 'true');
@@ -78,7 +84,9 @@ export default function LoginPage() {
       router.push('/');
     } catch (err) {
       console.error('Backend connection failed:', err);
-      setError('Sunucu bağlantısı kurulamadı. Lütfen sunucunun çalıştığından emin olun.');
+      const msg = 'Sunucu bağlantısı kurulamadı. Lütfen sunucunun çalıştığından emin olun.';
+      setError(msg);
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -166,6 +174,13 @@ export default function LoginPage() {
           {error && (
             <div className="bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-450 p-3 py-2 rounded-xl text-xs font-bold leading-relaxed mb-4">
               {error}
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-650 dark:text-emerald-400 p-3 py-2.5 rounded-xl text-xs font-bold leading-relaxed mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span>{successMessage}</span>
             </div>
           )}
 

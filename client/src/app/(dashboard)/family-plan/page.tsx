@@ -51,11 +51,12 @@ export default function FamilyPlanPage() {
   const handleMobileInviteSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inviteEmail) return;
-    const namePart = inviteEmail.split('@')[0];
+    const namePart = inviteEmail.trim().split('@')[0];
     const newMemberName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+    const resolvedEmail = inviteEmail.includes('@') ? inviteEmail.trim() : `${inviteEmail.trim().toLowerCase()}@family.com`;
     addMember(currentSubId, {
       name: newMemberName,
-      email: inviteEmail,
+      email: resolvedEmail,
       role: inviteRole,
       status: 'Active',
       avatar: '',
@@ -146,14 +147,14 @@ export default function FamilyPlanPage() {
     e.preventDefault();
     if (!inviteEmail) return;
     
-    const amount = parseFloat(invitePaidAmount) || 0;
-    const namePart = inviteEmail.split('@')[0];
+    const namePart = inviteEmail.trim().split('@')[0];
     const newMemberName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+    const resolvedEmail = inviteEmail.includes('@') ? inviteEmail.trim() : `${inviteEmail.trim().toLowerCase()}@family.com`;
     
     // Save member persistently to useFamilyStore with empty payments object
     addMember(currentSubId, {
       name: newMemberName,
-      email: inviteEmail,
+      email: resolvedEmail,
       role: inviteRole,
       status: 'Active',
       avatar: '',
@@ -369,13 +370,13 @@ export default function FamilyPlanPage() {
               <form onSubmit={handleInvite} className="flex flex-col md:flex-row gap-4 items-end">
                 <div className="flex-1 space-y-1.5 w-full">
                   <label className="text-xs font-semibold text-slate-400 dark:text-slate-500">
-                    {language === 'tr' ? 'E-posta Adresi / Kullanıcı Adı' : 'Email Address / Username'}
+                    {language === 'tr' ? 'Üye Adı / E-posta' : 'Member Name / Email'}
                   </label>
                   <input 
                     type="text" 
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
-                    placeholder="name@family.com" 
+                    placeholder={language === 'tr' ? 'Örn: Furkan veya name@family.com' : 'e.g. Furkan or name@family.com'} 
                     className="w-full px-4 py-2 text-sm rounded-xl border border-slate-155 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"
                   />
                 </div>
@@ -563,29 +564,82 @@ export default function FamilyPlanPage() {
                 const isAdmin = member.role === 'Owner' || member.role === 'Admin';
 
                 return (
-                  <div key={member.id} className="bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-4 rounded-xl flex items-center justify-between shadow-xs relative">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${avatarClass}`}>
-                        {initials}
+                  <div key={member.id} className="bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-4 rounded-xl flex flex-col gap-3 shadow-xs relative">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${avatarClass}`}>
+                          {initials}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-bold text-xs text-slate-900 dark:text-white leading-tight truncate">{member.name}</p>
+                          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 truncate">{member.email}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-xs text-slate-900 dark:text-white leading-tight">{member.name}</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{member.email}</p>
+                      
+                      <div className="flex flex-col items-end gap-1.5 shrink-0">
+                        <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider ${
+                          isAdmin 
+                            ? 'bg-indigo-500/10 text-indigo-500 border border-indigo-500/20' 
+                            : 'bg-slate-100 dark:bg-[#1d294d] text-slate-550 dark:text-slate-400 border border-transparent dark:border-[#232f4e]'
+                        }`}>
+                          {isAdmin ? (language === 'tr' ? 'Yönetici' : 'Admin') : (language === 'tr' ? 'Üye' : 'Member')}
+                        </span>
+                        <span className="text-[10px] text-slate-455 dark:text-slate-400 font-semibold flex items-center gap-1 leading-none">
+                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                          {language === 'tr' ? 'Aktif' : 'Active'}
+                        </span>
                       </div>
                     </div>
-                    
-                    <div className="flex flex-col items-end gap-1.5">
-                      <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider ${
-                        isAdmin 
-                          ? 'bg-indigo-500/10 text-indigo-500 border border-indigo-500/20' 
-                          : 'bg-slate-100 dark:bg-[#1d294d] text-slate-550 dark:text-slate-400 border border-transparent dark:border-[#232f4e]'
-                      }`}>
-                        {isAdmin ? (language === 'tr' ? 'Yönetici' : 'Admin') : (language === 'tr' ? 'Üye' : 'Member')}
-                      </span>
-                      <span className="text-[10px] text-slate-450 dark:text-slate-400 font-semibold flex items-center gap-1 leading-none">
-                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                        {language === 'tr' ? 'Aktif' : 'Active'}
-                      </span>
+
+                    {/* Monthly Payment Checklist Tracker & Action Buttons (for Mobile) */}
+                    <div className="pt-2.5 border-t border-slate-100 dark:border-[#232f4e]/40 flex flex-col gap-2">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mr-1">
+                            {language === 'tr' ? 'Ödeme Takibi:' : 'Track Payment:'}
+                          </span>
+                          <div className="flex items-center gap-1 flex-wrap">
+                            {rollingMonths.map((month) => {
+                              const isPaid = member.payments?.[month] ?? false;
+                              return (
+                                <button
+                                  key={month}
+                                  onClick={() => togglePayment(currentSubId, member.id, month)}
+                                  className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded transition-all ${
+                                    isPaid 
+                                      ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-455 border border-emerald-100 dark:border-emerald-500/20' 
+                                      : 'bg-rose-50 dark:bg-rose-500/10 text-rose-500 dark:text-rose-455 border border-rose-100/50 dark:border-rose-500/25'
+                                  }`}
+                                >
+                                  {month.slice(0, 3)} {isPaid ? '✓' : '✗'}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Remind & Delete Buttons */}
+                        <div className="flex items-center gap-1.5 ml-auto">
+                          {member.role !== 'Owner' && (
+                            <button
+                              onClick={() => handleSendReminder(member)}
+                              className="flex items-center gap-1 text-[9px] font-bold px-2 py-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/20 dark:hover:bg-indigo-900/40 text-indigo-650 dark:text-indigo-400 rounded-lg border border-indigo-100/50 dark:border-[#232f4e] transition-all active:scale-95 shrink-0"
+                            >
+                              <span className="material-symbols-outlined text-[12px]">notifications</span>
+                              <span>{language === 'tr' ? 'Hatırlat' : 'Remind'}</span>
+                            </button>
+                          )}
+                          {member.role !== 'Owner' && (
+                            <button
+                              onClick={() => handleRemove(member.id)}
+                              className="flex items-center gap-1 text-[9px] font-bold px-2 py-1 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 dark:hover:bg-rose-900/40 text-rose-600 rounded-lg border border-rose-100/50 dark:border-rose-500/20 transition-all active:scale-95 shrink-0"
+                            >
+                              <span className="material-symbols-outlined text-[12px]">delete</span>
+                              <span>{language === 'tr' ? 'Sil' : 'Delete'}</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
@@ -600,7 +654,7 @@ export default function FamilyPlanPage() {
               className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all text-xs"
             >
               <span className="material-symbols-outlined text-[18px]">person_add</span>
-              {language === 'tr' ? 'Üye Davet Et' : 'Invite Member'}
+              {language === 'tr' ? 'Yeni Üye Ekle' : 'Add New Member'}
             </button>
             <p className="text-center text-[10px] text-slate-400 dark:text-slate-550 font-bold mt-1">
               {language === 'tr' ? `${freeSeats} boş üyelik alanınız kaldı.` : `${freeSeats} empty slots remaining.`}
@@ -616,11 +670,11 @@ export default function FamilyPlanPage() {
           <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl w-full max-w-md border border-slate-100 dark:border-slate-900 shadow-xl relative animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-900">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                {language === 'tr' ? 'Üye Davet Et' : 'Invite Member'}
+                {language === 'tr' ? 'Yeni Üye Ekle' : 'Add New Member'}
               </h3>
               <button 
                 onClick={() => setIsInviteModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="text-slate-400 hover:text-slate-650 dark:hover:text-slate-200 transition-colors"
               >
                 <X className="w-4.5 h-4.5" />
               </button>
@@ -629,14 +683,14 @@ export default function FamilyPlanPage() {
             <form onSubmit={handleMobileInviteSubmit} className="space-y-4 pt-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">
-                  {language === 'tr' ? 'E-posta Adresi' : 'Email Address'}
+                  {language === 'tr' ? 'Üye Adı / E-posta' : 'Member Name / Email'}
                 </label>
                 <input 
-                  type="email" 
+                  type="text" 
                   required
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="e.g. name@family.com"
+                  placeholder={language === 'tr' ? 'Örn: Furkan veya name@family.com' : 'e.g. Furkan or name@family.com'}
                   className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500"
                 />
               </div>
@@ -664,7 +718,7 @@ export default function FamilyPlanPage() {
                   {language === 'tr' ? 'İptal' : 'Cancel'}
                 </button>
                 <Button type="submit" variant="primary" className="text-xs px-5">
-                  {language === 'tr' ? 'Gönder' : 'Send'}
+                  {language === 'tr' ? 'Ekle' : 'Add'}
                 </Button>
               </div>
             </form>
