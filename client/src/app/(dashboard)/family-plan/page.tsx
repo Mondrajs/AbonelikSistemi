@@ -47,6 +47,24 @@ export default function FamilyPlanPage() {
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
   const [invitePaidAmount, setInvitePaidAmount] = useState('');
 
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const handleMobileInviteSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteEmail) return;
+    const namePart = inviteEmail.split('@')[0];
+    const newMemberName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+    addMember(currentSubId, {
+      name: newMemberName,
+      email: inviteEmail,
+      role: inviteRole,
+      status: 'Active',
+      avatar: '',
+      payments: {}
+    });
+    setInviteEmail('');
+    setIsInviteModalOpen(false);
+  };
+
   // Rolling last 4 months dynamically
   const getRollingMonths = () => {
     const months = [];
@@ -165,7 +183,7 @@ export default function FamilyPlanPage() {
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto animate-in fade-in duration-150">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="hidden lg:flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">{t.familyPlanDetails}</h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t.familyPlanDescription}</p>
@@ -207,7 +225,7 @@ export default function FamilyPlanPage() {
         </div>
       ) : (
         /* Main Grid */
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Left Column: Member List & Invite Form */}
           <div className="lg:col-span-2 space-y-8">
@@ -471,6 +489,186 @@ export default function FamilyPlanPage() {
 
           </div>
 
+        </div>
+      )}
+
+      {/* Mobile View Container (Visible below lg) */}
+      {familySubs.length > 0 && (
+        <div className="lg:hidden space-y-6">
+          
+          {/* Overview Card */}
+          <section className="bg-slate-900 dark:bg-[#131c35] text-white p-5 rounded-2xl shadow-sm border border-transparent dark:border-[#232f4e]">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <span className="text-[9px] font-bold tracking-widest opacity-80 uppercase">
+                  {language === 'tr' ? 'AKTİF PLAN' : 'ACTIVE PLAN'}
+                </span>
+                <h2 className="text-xl font-black text-white mt-0.5">{activeSub?.name || 'Family Premium'}</h2>
+              </div>
+              <div className="bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                {language === 'tr' ? 'Aktif' : 'Active'}
+              </div>
+            </div>
+            
+            <div className="flex items-end justify-between mt-6">
+              <div className="space-y-1">
+                <span className="text-[9px] font-bold tracking-widest opacity-85 uppercase">
+                  {language === 'tr' ? 'ÜYELİK DURUMU' : 'MEMBERSHIP STATUS'}
+                </span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-black text-white">{occupiedSeats}</span>
+                  <span className="text-xs opacity-75">/ {totalSeats} {language === 'tr' ? 'Kişi' : 'People'}</span>
+                </div>
+              </div>
+              <div className="text-right space-y-1">
+                <span className="text-[9px] font-bold tracking-widest opacity-85 uppercase">
+                  {language === 'tr' ? 'AYLIK ÜCRET' : 'MONTHLY PRICE'}
+                </span>
+                <p className="text-xl font-black text-white">
+                  {currency}{(activeSub?.price * (language === 'tr' ? 6 : 1)).toFixed(2)}
+                </p>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="mt-5 h-2 bg-white/10 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-emerald-50 rounded-full transition-all duration-300" 
+                style={{ width: `${(occupiedSeats / totalSeats) * 100}%` }}
+              ></div>
+            </div>
+          </section>
+
+          {/* Family Members List Section */}
+          <section className="space-y-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <h3 className="text-sm font-black text-slate-900 dark:text-white">
+                {language === 'tr' ? 'Aile Üyeleri' : 'Family Members'}
+              </h3>
+              <span className="text-xs text-slate-400 dark:text-slate-500 font-semibold">
+                {occupiedSeats}/{totalSeats} {language === 'tr' ? 'Kullanıldı' : 'Occupied'}
+              </span>
+            </div>
+            
+            <div className="space-y-3">
+              {members.map((member: any, index: number) => {
+                const initials = member.name.split(' ').map((n: string) => n.charAt(0)).join('').toUpperCase().slice(0, 2);
+                const avatarColors = [
+                  'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400',
+                  'bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400',
+                  'bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400',
+                  'bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400',
+                ];
+                const avatarClass = avatarColors[index % avatarColors.length];
+                const isAdmin = member.role === 'Owner' || member.role === 'Admin';
+
+                return (
+                  <div key={member.id} className="bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-4 rounded-xl flex items-center justify-between shadow-xs relative">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${avatarClass}`}>
+                        {initials}
+                      </div>
+                      <div>
+                        <p className="font-bold text-xs text-slate-900 dark:text-white leading-tight">{member.name}</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{member.email}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col items-end gap-1.5">
+                      <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider ${
+                        isAdmin 
+                          ? 'bg-indigo-500/10 text-indigo-500 border border-indigo-500/20' 
+                          : 'bg-slate-100 dark:bg-[#1d294d] text-slate-550 dark:text-slate-400 border border-transparent dark:border-[#232f4e]'
+                      }`}>
+                        {isAdmin ? (language === 'tr' ? 'Yönetici' : 'Admin') : (language === 'tr' ? 'Üye' : 'Member')}
+                      </span>
+                      <span className="text-[10px] text-slate-450 dark:text-slate-400 font-semibold flex items-center gap-1 leading-none">
+                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                        {language === 'tr' ? 'Aktif' : 'Active'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Invite Member Action Form */}
+          <section className="pt-2 space-y-4">
+            <button 
+              onClick={() => setIsInviteModalOpen(true)}
+              className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-955 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all text-xs"
+            >
+              <span className="material-symbols-outlined text-[18px]">person_add</span>
+              {language === 'tr' ? 'Üye Davet Et' : 'Invite Member'}
+            </button>
+            <p className="text-center text-[10px] text-slate-400 dark:text-slate-550 font-bold mt-1">
+              {language === 'tr' ? `${freeSeats} boş üyelik alanınız kaldı.` : `${freeSeats} empty slots remaining.`}
+            </p>
+          </section>
+
+        </div>
+      )}
+
+      {/* Invite Member Mobile Modal Dialog */}
+      {isInviteModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl w-full max-w-md border border-slate-100 dark:border-slate-900 shadow-xl relative animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-900">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                {language === 'tr' ? 'Üye Davet Et' : 'Invite Member'}
+              </h3>
+              <button 
+                onClick={() => setIsInviteModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <X className="w-4.5 h-4.5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleMobileInviteSubmit} className="space-y-4 pt-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">
+                  {language === 'tr' ? 'E-posta Adresi' : 'Email Address'}
+                </label>
+                <input 
+                  type="email" 
+                  required
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  placeholder="e.g. name@family.com"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">
+                  {language === 'tr' ? 'Rol' : 'Role'}
+                </label>
+                <select
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value)}
+                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-50/50 dark:bg-slate-900/60 text-slate-850 dark:text-slate-150 focus:outline-none"
+                >
+                  <option value="Member">{language === 'tr' ? 'Üye' : 'Member'}</option>
+                  <option value="Admin">{language === 'tr' ? 'Yönetici' : 'Admin'}</option>
+                </select>
+              </div>
+
+              <div className="pt-4 flex items-center justify-end gap-3">
+                <button 
+                  type="button"
+                  onClick={() => setIsInviteModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+                >
+                  {language === 'tr' ? 'İptal' : 'Cancel'}
+                </button>
+                <Button type="submit" variant="primary" className="text-xs px-5">
+                  {language === 'tr' ? 'Gönder' : 'Send'}
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 

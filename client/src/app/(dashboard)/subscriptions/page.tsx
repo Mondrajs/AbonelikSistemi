@@ -234,7 +234,7 @@ export default function SubscriptionsListPage() {
       )}
       
       {/* Top Breadcrumbs & Header Bar */}
-      <div className="flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/10 px-4 py-3 rounded-2xl border border-slate-100 dark:border-slate-900/60">
+      <div className="hidden lg:flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/10 px-4 py-3 rounded-2xl border border-slate-100 dark:border-slate-900/60">
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 dark:text-slate-500">
           <Home className="w-3.5 h-3.5" />
           <span>/</span>
@@ -265,7 +265,7 @@ export default function SubscriptionsListPage() {
       </div>
 
       {/* Title & View Toggle Controls */}
-      <div className="flex items-center justify-between">
+      <div className="hidden lg:flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
             {language === 'tr' ? 'Tüm Aboneliklerim' : 'All My Subscriptions'}
@@ -303,7 +303,7 @@ export default function SubscriptionsListPage() {
       </div>
 
       {/* Advanced filters */}
-      <div className="bg-white dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-900 shadow-sm space-y-4">
+      <div className="hidden lg:block bg-white dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-900 shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="flex bg-slate-50 dark:bg-slate-900/50 p-1 rounded-xl border border-slate-100 dark:border-slate-800/80 w-full md:w-auto">
             <button
@@ -367,9 +367,43 @@ export default function SubscriptionsListPage() {
         </div>
       </div>
 
-      {/* Grid Headers (Visible in list view) */}
+      {/* Mobile-Only Search & Stats Overview Header (Visible below lg) */}
+      <div className="lg:hidden space-y-4">
+        {/* Search input matching template style */}
+        <div className="relative flex items-center group">
+          <span className="material-symbols-outlined absolute left-4 text-slate-400">search</span>
+          <input 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={language === 'tr' ? 'Aboneliklerde ara...' : 'Search subscriptions...'}
+            className="w-full bg-slate-100 dark:bg-[#131c35] border border-transparent dark:border-[#232f4e] rounded-xl py-3.5 pl-12 pr-4 text-xs font-semibold focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all shadow-sm text-slate-800 dark:text-slate-200" 
+            type="text"
+          />
+        </div>
+
+        {/* Stats Overview slider matching template */}
+        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          {/* Card 1: Total Monthly */}
+          <div className="bg-[#0f172a] dark:bg-[#dbeafe] text-white dark:text-[#090d1a] p-4 rounded-xl flex-shrink-0 min-w-[170px] shadow-sm">
+            <p className="text-[9px] font-bold tracking-widest opacity-80 mb-1">
+              {language === 'tr' ? 'AYLIK TOPLAM' : 'TOTAL MONTHLY'}
+            </p>
+            <p className="text-xl font-black">{currency}{totalMonthlySpend.toFixed(2)}</p>
+          </div>
+          
+          {/* Card 2: Renewing Soon */}
+          <div className="bg-white dark:bg-[#131c35] border border-slate-200/50 dark:border-[#232f4e] p-4 rounded-xl flex-shrink-0 min-w-[150px] shadow-xs text-slate-900 dark:text-white">
+            <p className="text-[9px] font-bold tracking-widest text-slate-400 dark:text-slate-500 mb-1">
+              {language === 'tr' ? 'YAKLAŞANLAR' : 'RENEWING SOON'}
+            </p>
+            <p className="text-xl font-black">3</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Grid Headers (Visible in list view on desktop only) */}
       {viewMode === 'list' && filteredSubs.length > 0 && (
-        <div className="hidden sm:grid grid-cols-12 px-6 text-[10px] font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase select-none">
+        <div className="hidden lg:grid grid-cols-12 px-6 text-[10px] font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase select-none">
           <div className="col-span-5">{language === 'tr' ? 'HİZMET / PLAN' : 'SERVICE / PLAN'}</div>
           <div className="col-span-2 text-center">{language === 'tr' ? 'DURUM' : 'STATUS'}</div>
           <div className="col-span-3 text-center">{language === 'tr' ? 'SIRADAKİ ÖDEME' : 'NEXT BILLING'}</div>
@@ -377,123 +411,186 @@ export default function SubscriptionsListPage() {
         </div>
       )}
 
-      {/* Subscriptions List Card container */}
-      <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-3'}>
+      {/* Desktop List/Grid View Container (Visible on lg and above) */}
+      <div className="hidden lg:block">
+        <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-3'}>
+          {filteredSubs.length === 0 ? (
+            <div className="p-16 text-center space-y-4 bg-white dark:bg-slate-950 rounded-3xl border border-slate-100 dark:border-slate-900">
+              <AlertCircle className="w-10 h-10 text-slate-300 dark:text-slate-700 mx-auto" />
+              <p className="text-xs text-slate-450 dark:text-slate-500 font-semibold">
+                {language === 'tr' ? 'Aradığınız kriterlere uygun abonelik bulunamadı.' : 'No subscriptions match your filter criteria.'}
+              </p>
+            </div>
+          ) : (
+            filteredSubs.map((sub: any) => {
+              const isPlanActive = sub.status === 'Active';
+              return (
+                <div 
+                  key={sub.id}
+                  className={`bg-white dark:bg-slate-950 p-4 border border-slate-100 dark:border-slate-900 rounded-2xl shadow-xs transition-all hover:border-slate-200 dark:hover:border-slate-800 cursor-pointer flex ${
+                    viewMode === 'grid' 
+                      ? 'flex-col justify-between h-48 gap-4' 
+                      : 'flex-row items-center justify-between gap-4'
+                  }`}
+                >
+                  {/* Left Panel / Top Section: Logo & Name */}
+                  <div onClick={() => router.push(`/subscriptions/${sub.id}`)} className={`flex items-center gap-3.5 ${viewMode === 'list' ? 'w-full sm:w-[40%]' : ''}`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 shadow-sm ${sub.color}`}>
+                      {sub.logo}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <h3 className="text-xs font-black text-slate-850 dark:text-white truncate">{sub.name}</h3>
+                        {sub.isFamilyPlan && (
+                          <span className="text-[8px] font-extrabold bg-indigo-650/10 text-indigo-600 dark:text-indigo-400 px-1 py-0.2 rounded uppercase tracking-wider shrink-0">
+                            {language === 'tr' ? 'Aile' : 'Family'}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium truncate mt-0.5">
+                        {getPlanDescription(sub.name, sub.category)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Status Pill */}
+                  <div className={`flex justify-center ${viewMode === 'list' ? 'hidden sm:flex sm:w-[15%]' : ''}`}>
+                    <span className={`text-[9px] font-black px-2.5 py-0.8 rounded-lg tracking-wider uppercase border ${
+                      isPlanActive 
+                        ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
+                        : 'bg-slate-500/10 text-slate-500 border-slate-500/20'
+                    }`}>
+                      {isPlanActive ? (language === 'tr' ? 'AKTİF' : 'ACTIVE') : (language === 'tr' ? 'PASİF' : 'PASSIVE')}
+                    </span>
+                  </div>
+
+                  {/* Next Billing Date */}
+                  <div className={`flex items-center justify-center gap-1.5 text-xs font-bold ${
+                    isPlanActive ? 'text-slate-650 dark:text-slate-350' : 'text-slate-400 dark:text-slate-500'
+                  } ${viewMode === 'list' ? 'hidden sm:flex sm:w-[25%]' : ''}`}>
+                    {isPlanActive ? (
+                      <>
+                        <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-slate-550" />
+                        <span className="text-[11px] font-semibold">{getFormattedDate(sub.nextBilling)}</span>
+                      </>
+                    ) : (
+                      <span className="text-[11px] font-semibold">{language === 'tr' ? 'İptal Edildi' : 'Canceled'}</span>
+                    )}
+                  </div>
+
+                  {/* Cost & Chevron Option */}
+                  <div className={`flex items-center justify-end gap-4 ${viewMode === 'list' ? 'w-auto sm:w-[20%]' : ''}`}>
+                    <span className={`text-sm font-black text-slate-850 dark:text-white ${viewMode === 'list' ? 'hidden sm:inline' : ''}`}>
+                      {formatSubPrice(sub.price, sub.currency)}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/subscriptions/${sub.id}`);
+                        }}
+                        className="p-1 text-slate-450 hover:text-slate-900 dark:hover:text-white"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteSubscription(sub.id);
+                        }}
+                        className="p-1 text-slate-400 hover:text-rose-500 transition-colors"
+                        title={t.delete}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      {/* Mobile-Only List View (Visible below lg) */}
+      <div className="lg:hidden space-y-3">
+        <h2 className="text-sm font-black text-slate-900 dark:text-white mb-2.5">
+          {language === 'tr' ? 'Aktif Abonelikler' : 'Active Subscriptions'}
+        </h2>
         {filteredSubs.length === 0 ? (
-          <div className="p-16 text-center space-y-4 bg-white dark:bg-slate-955 bg-white dark:bg-slate-950 rounded-3xl border border-slate-100 dark:border-slate-900">
-            <AlertCircle className="w-10 h-10 text-slate-300 dark:text-slate-700 mx-auto" />
-            <p className="text-xs text-slate-450 dark:text-slate-500 font-semibold">
-              {language === 'tr' ? 'Aradığınız kriterlere uygun abonelik bulunamadı.' : 'No subscriptions match your filter criteria.'}
+          <div className="p-12 text-center space-y-4 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-900">
+            <AlertCircle className="w-8 h-8 text-slate-350 dark:text-slate-700 mx-auto" />
+            <p className="text-xs text-slate-400 dark:text-slate-500 font-semibold">
+              {language === 'tr' ? 'Abonelik bulunamadı.' : 'No subscriptions found.'}
             </p>
           </div>
         ) : (
-          filteredSubs.map((sub) => {
+          filteredSubs.map((sub: any) => {
             const isPlanActive = sub.status === 'Active';
+            // Custom brand colors matching the mobile template design
+            const bgClass = sub.name.toLowerCase().includes('netflix') 
+              ? 'bg-[#E50914]' 
+              : sub.name.toLowerCase().includes('spotify') 
+              ? 'bg-[#1DB954]' 
+              : sub.name.toLowerCase().includes('adobe') 
+              ? 'bg-[#FA0F00]' 
+              : sub.name.toLowerCase().includes('youtube') 
+              ? 'bg-[#FF0000]' 
+              : sub.name.toLowerCase().includes('notion') 
+              ? 'bg-black' 
+              : sub.color || 'bg-slate-900';
+
             return (
               <div 
-                key={sub.id}
-                className={`bg-white dark:bg-slate-950 p-4 border border-slate-100 dark:border-slate-900 rounded-2xl shadow-xs transition-all hover:border-slate-200 dark:hover:border-slate-800 cursor-pointer flex ${
-                  viewMode === 'grid' 
-                    ? 'flex-col justify-between h-48 gap-4' 
-                    : 'flex-row items-center justify-between gap-4'
-                }`}
+                key={sub.id} 
+                onClick={() => router.push(`/subscriptions/${sub.id}`)}
+                className="subscription-card bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-4 rounded-xl flex items-center justify-between shadow-xs active:scale-[0.98] transition-transform duration-100 cursor-pointer"
               >
-                {/* Left Panel / Top Section: Logo & Name */}
-                <div onClick={() => router.push(`/subscriptions/${sub.id}`)} className={`flex items-center gap-3.5 ${viewMode === 'list' ? 'w-full sm:w-[40%]' : ''}`}>
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 shadow-sm ${sub.color}`}>
-                    {sub.logo}
+                <div className="flex items-center gap-3">
+                  <div className={`w-11 h-11 rounded-lg flex items-center justify-center p-2 text-white font-extrabold text-sm shrink-0 ${bgClass}`}>
+                    {sub.logo || sub.name.charAt(0).toUpperCase()}
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <h3 className="text-xs font-black text-slate-850 dark:text-white truncate">{sub.name}</h3>
-                      {sub.isFamilyPlan && (
-                        <span className="text-[8px] font-extrabold bg-indigo-650/10 text-indigo-600 dark:text-indigo-400 px-1 py-0.2 rounded uppercase tracking-wider shrink-0">
-                          {language === 'tr' ? 'Aile' : 'Family'}
-                        </span>
-                      )}
+                  <div>
+                    <h3 className="text-xs font-black text-slate-900 dark:text-white leading-tight">{sub.name}</h3>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="px-2 py-0.5 bg-slate-50 dark:bg-[#1d294d] text-slate-500 dark:text-slate-350 text-[8px] font-black rounded-full uppercase tracking-wider">
+                        {t[sub.category as keyof typeof t] || sub.category}
+                      </span>
+                      <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold leading-none">
+                        • {sub.isFamilyPlan ? (language === 'tr' ? 'Aile' : 'Family') : (language === 'tr' ? 'Kişisel' : 'Individual')}
+                      </span>
                     </div>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium truncate mt-0.5">
-                      {getPlanDescription(sub.name, sub.category)}
-                    </p>
-                    
-                    {/* Only show on mobile when in list view */}
-                    {viewMode === 'list' && (
-                      <div className="sm:hidden flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        <span className="text-[9px] font-extrabold text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/40 px-1.5 py-0.5 rounded">
-                          {formatSubPrice(sub.price, sub.currency)}
-                        </span>
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider bg-slate-50 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400">
-                          {t[sub.category as keyof typeof t] || sub.category}
-                        </span>
-                        <span className="text-[10px] text-slate-455 dark:text-slate-500 font-semibold">
-                          • {isPlanActive ? getFormattedDate(sub.nextBilling) : (language === 'tr' ? 'İptal' : 'Canceled')}
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
-
-                {/* Status Pill */}
-                <div className={`flex justify-center ${viewMode === 'list' ? 'hidden sm:flex sm:w-[15%]' : ''}`}>
-                  <span className={`text-[9px] font-black px-2.5 py-0.8 rounded-lg tracking-wider uppercase border ${
-                    isPlanActive 
-                      ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
-                      : 'bg-slate-500/10 text-slate-500 border-slate-500/20'
-                  }`}>
-                    {isPlanActive ? (language === 'tr' ? 'AKTİF' : 'ACTIVE') : (language === 'tr' ? 'PASİF' : 'PASSIVE')}
-                  </span>
-                </div>
-
-                {/* Next Billing Date */}
-                <div className={`flex items-center justify-center gap-1.5 text-xs font-bold ${
-                  isPlanActive ? 'text-slate-650 dark:text-slate-350' : 'text-slate-400 dark:text-slate-500'
-                } ${viewMode === 'list' ? 'hidden sm:flex sm:w-[25%]' : ''}`}>
-                  {isPlanActive ? (
-                    <>
-                      <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-slate-550" />
-                      <span className="text-[11px] font-semibold">{getFormattedDate(sub.nextBilling)}</span>
-                    </>
-                  ) : (
-                    <span className="text-[11px] font-semibold">{language === 'tr' ? 'İptal Edildi' : 'Canceled'}</span>
-                  )}
-                </div>
-
-                {/* Cost & Chevron Option */}
-                <div className={`flex items-center justify-end gap-4 ${viewMode === 'list' ? 'w-auto sm:w-[20%]' : ''}`}>
-                  <span className={`text-sm font-black text-slate-850 dark:text-white ${viewMode === 'list' ? 'hidden sm:inline' : ''}`}>
+                
+                <div className="text-right">
+                  <p className="text-xs font-black text-slate-900 dark:text-white">
                     {formatSubPrice(sub.price, sub.currency)}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/subscriptions/${sub.id}`);
-                      }}
-                      className="p-1 text-slate-450 hover:text-slate-900 dark:hover:text-white"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteSubscription(sub.id);
-                      }}
-                      className="p-1 text-slate-400 hover:text-rose-500 transition-colors"
-                      title={t.delete}
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+                  </p>
+                  <p className={`text-[10px] mt-0.5 font-bold ${isPlanActive ? 'text-slate-400 dark:text-slate-500' : 'text-rose-500'}`}>
+                    {isPlanActive 
+                      ? (language === 'tr' ? `Kalan: ${getFormattedDate(sub.nextBilling)}` : `Due: ${getFormattedDate(sub.nextBilling)}`) 
+                      : (language === 'tr' ? 'Süresi Doldu' : 'Expired')}
+                  </p>
                 </div>
-
               </div>
             );
           })
         )}
       </div>
 
-      {/* Bottom Summary Boxes */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-100 dark:border-slate-900">
+      {/* Mobile Floating Action Button */}
+      <div className="lg:hidden fixed bottom-6 right-6 z-40">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="w-14 h-14 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full shadow-xl flex items-center justify-center active:scale-95 transition-transform"
+        >
+          <Plus className="w-7 h-7" />
+        </button>
+      </div>
+
+      {/* Desktop-Only Bottom Summary Boxes */}
+      <div className="hidden lg:grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-100 dark:border-slate-900">
         <div className="bg-white dark:bg-slate-950 p-5 rounded-2xl border border-slate-100 dark:border-slate-900 shadow-xs flex flex-col justify-between gap-3 relative overflow-hidden">
           <div className="absolute top-[-20px] right-[-20px] w-20 h-20 bg-indigo-500/5 rounded-full blur-xl"></div>
           <span className="text-[9px] font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase">

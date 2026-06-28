@@ -27,6 +27,7 @@ export default function SettingsPage() {
   const subscriptions = useSubscriptionStore((state) => state.subscriptions);
 
   const [activeTab, setActiveTab] = useState('profile');
+  const [activeMobileTab, setActiveMobileTab] = useState<string | null>(null);
   
   // Local profile inputs
   const [firstName, setFirstName] = useState(user.firstName);
@@ -251,13 +252,13 @@ export default function SettingsPage() {
     <div className="space-y-8 max-w-[1600px] mx-auto animate-in fade-in duration-150">
       
       {/* Header */}
-      <div>
+      <div className="hidden lg:block">
         <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">{t.settingsAndPreferences}</h1>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t.settingsDescription}</p>
       </div>
 
       {/* Main Container Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="hidden lg:grid grid-cols-1 md:grid-cols-4 gap-8">
         
         {/* Left Side: Tabs Menu */}
         <div className="md:col-span-1 space-y-1">
@@ -669,6 +670,427 @@ export default function SettingsPage() {
           )}
 
         </div>
+
+      </div>
+
+      {/* Mobile View Container (Visible below lg) */}
+      <div className="lg:hidden space-y-6">
+        
+        {/* Settings Detail View Overlay */}
+        {activeMobileTab !== null ? (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => setActiveMobileTab(null)}
+                className="text-slate-900 dark:text-white p-1 flex items-center justify-center bg-slate-100 dark:bg-[#131c35] rounded-xl border border-transparent dark:border-[#232f4e] active:scale-95 transition-transform"
+              >
+                <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+              </button>
+              <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                {activeMobileTab === 'profile' ? (language === 'tr' ? 'Profil Ayarları' : 'Profile Settings')
+                 : activeMobileTab === 'notifications' ? (language === 'tr' ? 'Bildirimler' : 'Notifications')
+                 : activeMobileTab === 'security' ? (language === 'tr' ? 'Şifre & Güvenlik' : 'Security')
+                 : (language === 'tr' ? 'Dil ve Para Birimi' : 'Language & Currency')}
+              </h2>
+            </div>
+
+            {/* Profile Tab Details */}
+            {activeMobileTab === 'profile' && (
+              <form onSubmit={handleSave} className="bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-5 rounded-2xl space-y-4 shadow-xs">
+                <div className="flex flex-col items-center gap-3 mb-4">
+                  <div className="relative">
+                    <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-indigo-500">
+                      <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                    </div>
+                    <button 
+                      type="button" 
+                      onClick={triggerFileInput}
+                      className="absolute bottom-0 right-0 bg-slate-900 text-white dark:bg-white dark:text-slate-900 w-7 h-7 rounded-full flex items-center justify-center border-2 border-white dark:border-[#131c35]"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                    </button>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleFileChange} 
+                      className="hidden" 
+                      accept="image/*"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={handleRemoveAvatar} className="text-[10px] text-rose-500 font-bold border border-rose-500/20 px-2.5 py-1 rounded-lg">
+                      {language === 'tr' ? 'Resmi Kaldır' : 'Remove Logo'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-550 uppercase">{t.firstName}</label>
+                  <input 
+                    type="text" 
+                    value={firstName} 
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-555 uppercase">{t.lastName}</label>
+                  <input 
+                    type="text" 
+                    value={lastName} 
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-555 uppercase">{t.emailAddress}</label>
+                  <input 
+                    type="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <Button type="submit" variant="primary" className="w-full text-xs py-3.5 shadow-md shadow-indigo-650/15">
+                    {t.saveDetails}
+                  </Button>
+                </div>
+              </form>
+            )}
+
+            {/* Notifications Tab Details */}
+            {activeMobileTab === 'notifications' && (
+              <div className="space-y-4 animate-in fade-in duration-150">
+                <div className="bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-5 rounded-2xl space-y-4 shadow-xs divide-y divide-slate-100 dark:divide-slate-900/50">
+                  
+                  {/* Renewal Reminders Toggle */}
+                  <div className="flex items-center justify-between pb-3.5 pt-1">
+                    <div className="max-w-[75%]">
+                      <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{t.renewalReminders}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-400/80 mt-0.5">{t.renewalRemindersDesc}</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer select-none">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={notifications.notifRenewal} 
+                        onChange={() => updateNotifications({ notifRenewal: !notifications.notifRenewal })}
+                      />
+                      <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-650"></div>
+                    </label>
+                  </div>
+
+                  {/* Weekly Reports Toggle */}
+                  <div className="flex items-center justify-between py-3.5">
+                    <div className="max-w-[75%]">
+                      <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{t.weeklyReports}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-400/80 mt-0.5">{t.weeklyReportsDesc}</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer select-none">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={notifications.notifWeekly} 
+                        onChange={() => updateNotifications({ notifWeekly: !notifications.notifWeekly })}
+                      />
+                      <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-650"></div>
+                    </label>
+                  </div>
+
+                  {/* Security Alerts Toggle */}
+                  <div className="flex items-center justify-between py-3.5">
+                    <div className="max-w-[75%]">
+                      <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{t.securityAlerts}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-400/80 mt-0.5">{t.securityAlertsDesc}</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer select-none">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={notifications.notifSecurity} 
+                        onChange={() => updateNotifications({ notifSecurity: !notifications.notifSecurity })}
+                      />
+                      <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-650"></div>
+                    </label>
+                  </div>
+
+                  {/* Telegram Notifications Toggle */}
+                  <div className="flex items-center justify-between py-3.5">
+                    <div className="max-w-[75%]">
+                      <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{language === 'tr' ? 'Telegram Bildirimleri' : 'Telegram Notifications'}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-400/80 mt-0.5">
+                        {language === 'tr' ? 'Fatura bildirimlerini Telegram ile alın.' : 'Receive renew alerts via Telegram.'}
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer select-none">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={notifications.telegramActive} 
+                        onChange={() => updateNotifications({ telegramActive: !notifications.telegramActive })}
+                      />
+                      <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-650"></div>
+                    </label>
+                  </div>
+
+                  {/* Telegram Credentials Forms */}
+                  {notifications.telegramActive && (
+                    <div className="pt-4 space-y-3 animate-in fade-in duration-200">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-400 dark:text-slate-555 uppercase">Bot Token</label>
+                        <input 
+                          type="text" 
+                          value={notifications.telegramToken || ''} 
+                          onChange={(e) => updateNotifications({ telegramToken: e.target.value })}
+                          className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                          placeholder="123456:ABC-DEF"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-400 dark:text-slate-555 uppercase">Chat ID</label>
+                        <input 
+                          type="text" 
+                          value={notifications.telegramChatId || ''} 
+                          onChange={(e) => updateNotifications({ telegramChatId: e.target.value })}
+                          className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                          placeholder="987654321"
+                        />
+                      </div>
+                      <button 
+                        type="button"
+                        onClick={handleTestTelegram}
+                        disabled={telegramStatus === 'sending'}
+                        className="w-full text-xs font-bold text-indigo-650 bg-indigo-50 dark:bg-indigo-500/10 dark:text-indigo-400 py-2.5 rounded-xl transition-all"
+                      >
+                        {telegramStatus === 'sending' ? (language === 'tr' ? 'Gönderiliyor...' : 'Sending...') : (language === 'tr' ? 'Telegram Test Mesajı Gönder' : 'Test Telegram Alert')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Security Tab Details */}
+            {activeMobileTab === 'security' && (
+              <form className="bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-5 rounded-2xl space-y-4 shadow-xs">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{t.currentPassword}</label>
+                  <input type="password" placeholder="••••••••" className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{t.newPassword}</label>
+                  <input type="password" placeholder="••••••••" className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none" />
+                </div>
+                <div className="pt-2">
+                  <Button variant="primary" className="w-full text-xs py-3.5 shadow-md shadow-indigo-650/15">{t.updatePassword}</Button>
+                </div>
+              </form>
+            )}
+
+            {/* Language and Currency Details */}
+            {activeMobileTab === 'language' && (
+              <div className="bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-5 rounded-2xl space-y-5 shadow-xs">
+                
+                {/* Language Select */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{language === 'tr' ? 'Dil Seçimi' : 'Language Select'}</label>
+                  <div className="flex gap-2">
+                    <button 
+                      type="button" 
+                      onClick={() => { useLanguageStore.setState({ language: 'tr' }) }}
+                      className={`flex-1 py-2 text-xs font-bold rounded-xl border ${language === 'tr' ? 'border-indigo-650 text-indigo-650 bg-indigo-50/20 dark:text-indigo-400 dark:bg-indigo-500/10' : 'border-slate-200 dark:border-slate-800 text-slate-500'}`}
+                    >
+                      Türkçe (TR)
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => { useLanguageStore.setState({ language: 'en' }) }}
+                      className={`flex-1 py-2 text-xs font-bold rounded-xl border ${language === 'en' ? 'border-indigo-650 text-indigo-650 bg-indigo-50/20 dark:text-indigo-400 dark:bg-indigo-500/10' : 'border-slate-200 dark:border-slate-800 text-slate-500'}`}
+                    >
+                      English (EN)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Appearance Theme Switcher / Night shade */}
+                <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
+                    {language === 'tr' ? 'Görünüm Teması' : 'Appearance Theme'}
+                  </label>
+                  <div className="flex gap-2">
+                    <button 
+                      type="button"
+                      onClick={() => setTheme('light')}
+                      className={`flex-1 py-2 text-xs font-bold rounded-xl border flex items-center justify-center gap-1.5 transition-all ${theme === 'light' ? 'border-indigo-650 text-indigo-650 bg-indigo-50/20 dark:text-indigo-400 dark:bg-indigo-500/10' : 'border-slate-200 dark:border-slate-800 text-slate-500'}`}
+                    >
+                      <Sun className="w-3.5 h-3.5" />
+                      <span>{language === 'tr' ? 'Açık' : 'Light'}</span>
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setTheme('dark')}
+                      className={`flex-1 py-2 text-xs font-bold rounded-xl border flex items-center justify-center gap-1.5 transition-all ${theme === 'dark' ? 'border-indigo-650 text-indigo-650 bg-indigo-50/20 dark:text-indigo-400 dark:bg-indigo-500/10' : 'border-slate-200 dark:border-slate-800 text-slate-505'}`}
+                    >
+                      <Moon className="w-3.5 h-3.5" />
+                      <span>{language === 'tr' ? 'Koyu' : 'Dark'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Currency Select */}
+                <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{language === 'tr' ? 'Para Birimi' : 'Currency'}</label>
+                  <div className="flex gap-2">
+                    {['TRY', 'USD', 'EUR'].map((cur) => (
+                      <button
+                        key={cur}
+                        type="button" 
+                        onClick={() => updateNotifications({ baseCurrency: cur })}
+                        className={`flex-1 py-2 text-xs font-bold rounded-xl border ${
+                          (notifications.baseCurrency || 'TRY') === cur
+                            ? 'border-indigo-650 text-indigo-650 bg-indigo-50/20 dark:text-indigo-400 dark:bg-indigo-500/10'
+                            : 'border-slate-200 dark:border-slate-800 text-slate-505'
+                        }`}
+                      >
+                        {cur === 'TRY' ? 'TL (₺)' : cur === 'USD' ? 'USD ($)' : 'EUR (€)'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+        ) : (
+          /* Settings List View */
+          <div className="space-y-6">
+            {/* Profile Header Box */}
+            <div className="bg-white dark:bg-[#131c35] rounded-2xl p-5 border border-slate-150/60 dark:border-[#232f4e] shadow-xs">
+              <div className="flex flex-col items-center text-center">
+                <div className="relative mb-3">
+                  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-indigo-500">
+                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  </div>
+                  <button 
+                    onClick={() => setActiveMobileTab('profile')}
+                    className="absolute bottom-0 right-0 bg-slate-900 text-white dark:bg-white dark:text-slate-900 w-7 h-7 rounded-full flex items-center justify-center border-2 border-white dark:border-[#131c35] active:scale-95 transition-transform"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                  </button>
+                </div>
+                <h2 className="font-headline-md text-base font-black text-slate-900 dark:text-white leading-tight">
+                  {user.firstName} {user.lastName}
+                </h2>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold mt-1">{user.email}</p>
+                
+                <div className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 rounded-full text-[9px] font-black uppercase tracking-wider">
+                  <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
+                  <span>Premium Plan</span>
+                </div>
+              </div>
+            </div>
+
+            {/* List Menu Section */}
+            <div className="space-y-2">
+              <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-555 uppercase tracking-widest px-1">
+                {language === 'tr' ? 'Hesap Ayarları' : 'Account Settings'}
+              </h3>
+              
+              <div className="bg-white dark:bg-[#131c35] rounded-2xl border border-slate-150/60 dark:border-[#232f4e] overflow-hidden divide-y divide-slate-100 dark:divide-slate-900">
+                {/* Profile Edit button */}
+                <button 
+                  onClick={() => setActiveMobileTab('profile')}
+                  className="w-full flex items-center justify-between p-4 hover:bg-slate-55 dark:hover:bg-slate-900/40 text-left active:scale-[0.99] transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-[#1d294d] flex items-center justify-center text-slate-700 dark:text-slate-350">
+                      <span className="material-symbols-outlined text-[20px]">person</span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight">{language === 'tr' ? 'Profil Ayarları' : 'Profile Settings'}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{language === 'tr' ? 'Ad, soyad ve e-posta güncelle' : 'Manage your name and email'}</p>
+                    </div>
+                  </div>
+                  <span className="material-symbols-outlined text-slate-400 text-[18px]">chevron_right</span>
+                </button>
+
+                {/* Notifications button */}
+                <button 
+                  onClick={() => setActiveMobileTab('notifications')}
+                  className="w-full flex items-center justify-between p-4 hover:bg-slate-55 dark:hover:bg-slate-900/40 text-left active:scale-[0.99] transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-[#1d294d] flex items-center justify-center text-slate-700 dark:text-slate-350">
+                      <span className="material-symbols-outlined text-[20px]">notifications_active</span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight">{language === 'tr' ? 'Bildirimler' : 'Notifications'}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{language === 'tr' ? 'Telegram ve hatırlatıcı ayarları' : 'Alerts and billing updates'}</p>
+                    </div>
+                  </div>
+                  <span className="material-symbols-outlined text-slate-400 text-[18px]">chevron_right</span>
+                </button>
+
+                {/* Security button */}
+                <button 
+                  onClick={() => setActiveMobileTab('security')}
+                  className="w-full flex items-center justify-between p-4 hover:bg-slate-55 dark:hover:bg-slate-900/40 text-left active:scale-[0.99] transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-[#1d294d] flex items-center justify-center text-slate-700 dark:text-slate-350">
+                      <span className="material-symbols-outlined text-[20px]">security</span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight">{language === 'tr' ? 'Şifre & Güvenlik' : 'Security'}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{language === 'tr' ? 'Parola güncelle ve koruma' : 'Password and 2FA settings'}</p>
+                    </div>
+                  </div>
+                  <span className="material-symbols-outlined text-slate-400 text-[18px]">chevron_right</span>
+                </button>
+
+                {/* Language, Theme & Currency button */}
+                <button 
+                  onClick={() => setActiveMobileTab('language')}
+                  className="w-full flex items-center justify-between p-4 hover:bg-slate-55 dark:hover:bg-slate-900/40 text-left active:scale-[0.99] transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-[#1d294d] flex items-center justify-center text-slate-700 dark:text-slate-350">
+                      <span className="material-symbols-outlined text-[20px]">language</span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
+                        {language === 'tr' ? 'Dil, Tema ve Para Birimi' : 'Language, Theme & Currency'}
+                      </p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                        {language === 'tr' ? 'Tema (Açık/Koyu), dil ve para birimi tercihi' : 'Set active theme, language and currency'}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="material-symbols-outlined text-slate-400 text-[18px]">chevron_right</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Logout Action */}
+            <div className="pt-4">
+              <button 
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    localStorage.removeItem('user-storage');
+                    window.location.href = '/login';
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-2 p-3.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-455 border border-rose-500/10 font-bold active:scale-[0.98] transition-all text-xs"
+              >
+                <span className="material-symbols-outlined text-[18px]">logout</span>
+                <span>{language === 'tr' ? 'Çıkış Yap' : 'Logout'}</span>
+              </button>
+              <p className="mt-4 text-center text-[10px] text-slate-400 dark:text-slate-555 font-bold opacity-60">Version 2.4.12 • Subly Secure Mobile</p>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

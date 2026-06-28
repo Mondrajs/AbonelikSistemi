@@ -653,6 +653,175 @@ export default function Dashboard() {
         </section>
       </div>
 
+      {/* Mobile View Container (Visible below lg) */}
+      <div className="lg:hidden space-y-6">
+        
+        {/* Dashboard Summary Bento Grid */}
+        <section>
+          <div className="grid grid-cols-2 gap-3">
+            
+            {/* Total Monthly Spend */}
+            <div className="col-span-2 bg-white dark:bg-[#131c35] p-4 rounded-xl border border-slate-150/60 dark:border-[#232f4e] flex flex-col justify-between h-32 shadow-xs">
+              <div>
+                <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                  {language === 'tr' ? 'AYLIK TOPLAM HARCAMA' : 'TOTAL MONTHLY SPEND'}
+                </p>
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-1">
+                  {getCurrencySymbol(notifications.baseCurrency || 'TRY')}{totalMonthlySpend.toFixed(2)}
+                </h2>
+              </div>
+              <div className="flex items-center gap-1 text-emerald-500 font-bold text-xs">
+                <span className="material-symbols-outlined text-[16px]">trending_up</span>
+                <span>{language === 'tr' ? '%4 artış (geçen aya göre)' : '4% vs last month'}</span>
+              </div>
+            </div>
+
+            {/* Active Count Card */}
+            <div className="bg-[#1e293b] dark:bg-[#1a233d] border border-transparent dark:border-[#2b395e] p-4 rounded-xl flex flex-col justify-between h-36 shadow-xs text-white">
+              <span className="material-symbols-outlined text-slate-300 dark:text-slate-400 text-lg">subscriptions</span>
+              <div>
+                <p className="text-[9px] font-bold text-slate-300 dark:text-slate-400 uppercase">
+                  {language === 'tr' ? 'AKTİF ABONELİK' : 'ACTIVE SUBS'}
+                </p>
+                <h3 className="text-xl font-black text-white mt-0.5">{activeSubsCount}</h3>
+              </div>
+            </div>
+
+            {/* Next Payment Card */}
+            <div className="bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-4 rounded-xl flex flex-col justify-between h-36 shadow-xs">
+              <span className="material-symbols-outlined text-indigo-500 text-lg">event</span>
+              <div>
+                <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">
+                  {language === 'tr' ? 'YAKLAŞAN ÖDEME' : 'NEXT DUE'}
+                </p>
+                <h3 className="text-sm font-black text-slate-900 dark:text-white mt-0.5">
+                  {nextPaymentSub ? (language === 'tr' ? `${nextPaymentSub.name} (${nextPaymentDateStr})` : `${nextPaymentSub.name} (${nextPaymentDateStr})`) : '-'}
+                </h3>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Quick Actions */}
+        <section className="space-y-3">
+          <h3 className="text-sm font-black text-slate-900 dark:text-white">
+            {language === 'tr' ? 'Hızlı İşlemler' : 'Quick Actions'}
+          </h3>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-955 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all text-xs shadow-md"
+          >
+            <span className="material-symbols-outlined text-[18px]">add_circle</span>
+            {language === 'tr' ? 'Abonelik Ekle' : 'Add Subscription'}
+          </button>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <button 
+              onClick={() => router.push('/analytics')}
+              className="bg-slate-100 dark:bg-[#131c35] border border-transparent dark:border-[#232f4e] p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-200 dark:hover:bg-[#1a2544] transition-all text-xs font-bold text-slate-800 dark:text-slate-200"
+            >
+              <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 text-[18px]">analytics</span>
+              <span>{language === 'tr' ? 'Raporlar' : 'Reports'}</span>
+            </button>
+            <button 
+              onClick={() => router.push('/family-plan')}
+              className="bg-slate-100 dark:bg-[#131c35] border border-transparent dark:border-[#232f4e] p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-200 dark:hover:bg-[#1a2544] transition-all text-xs font-bold text-slate-800 dark:text-slate-200"
+            >
+              <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 text-[18px]">group</span>
+              <span>{language === 'tr' ? 'Aile Yönetimi' : 'Manage Family'}</span>
+            </button>
+          </div>
+        </section>
+
+        {/* Upcoming Payments */}
+        <section className="space-y-3">
+          <div className="flex justify-between items-end">
+            <h3 className="text-sm font-black text-slate-900 dark:text-white">
+              {language === 'tr' ? 'Yaklaşan Ödemeler' : 'Upcoming Payments'}
+            </h3>
+            <button 
+              onClick={() => router.push('/subscriptions')}
+              className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider"
+            >
+              {language === 'tr' ? 'TÜMÜNÜ GÖR' : 'VIEW ALL'}
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {subList.slice(0, 3).map((sub: any) => {
+              const isPlanActive = sub.status === 'Active';
+              // Brand colors
+              const bgClass = sub.name.toLowerCase().includes('netflix') 
+                ? 'bg-[#E50914]' 
+                : sub.name.toLowerCase().includes('spotify') 
+                ? 'bg-[#1DB954]' 
+                : sub.name.toLowerCase().includes('adobe') 
+                ? 'bg-[#FA0F00]' 
+                : sub.name.toLowerCase().includes('youtube') 
+                ? 'bg-[#FF0000]' 
+                : sub.name.toLowerCase().includes('notion') 
+                ? 'bg-black' 
+                : sub.color || 'bg-slate-900';
+
+              return (
+                <div 
+                  key={sub.id} 
+                  onClick={() => router.push(`/subscriptions/${sub.id}`)}
+                  className="bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-3.5 rounded-xl flex items-center justify-between shadow-xs active:scale-[0.98] transition-transform cursor-pointer"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`w-11 h-11 rounded-lg flex items-center justify-center p-2 text-white font-extrabold text-sm shrink-0 ${bgClass}`}>
+                      {sub.logo || sub.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-xs text-slate-900 dark:text-white leading-tight">{sub.name}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                        {isPlanActive 
+                          ? `${language === 'tr' ? 'Yarın Ödenecek' : 'Due tomorrow'}` 
+                          : (language === 'tr' ? 'Ödeme Günü Geçti' : 'Overdue')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-black text-xs text-slate-900 dark:text-white">
+                      {getCurrencySymbol(sub.currency)}{sub.price.toFixed(2)}
+                    </p>
+                    <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-450 rounded-full text-[9px] font-black uppercase tracking-wider">
+                      AUTO-PAY
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Spend Insight Preview */}
+        <section>
+          <div className="bg-indigo-50 dark:bg-[#1d294d] p-5 rounded-2xl relative overflow-hidden border border-transparent dark:border-[#232f4e]">
+            <div className="relative z-10 pr-16">
+              <h4 className="text-xs font-black text-indigo-900 dark:text-indigo-200 uppercase tracking-widest">
+                {language === 'tr' ? 'Harcama Analizi' : 'Spend Insight'}
+              </h4>
+              <p className="text-[11px] text-indigo-750 dark:text-indigo-300 mt-1 leading-relaxed">
+                {language === 'tr' 
+                  ? 'Eğlence kategorisindeki harcamalarınız bu ay %15 arttı. Kullanmadığınız deneme üyeliklerini iptal etmeyi düşünebilirsiniz.' 
+                  : "Your 'Entertainment' category grew by 15% this month. Consider auditing unused trials."}
+              </p>
+              <button 
+                onClick={() => router.push('/analytics')}
+                className="mt-4 bg-slate-900 dark:bg-white text-white dark:text-slate-950 px-4 py-2 rounded-full text-[10px] font-black tracking-wider uppercase active:scale-95 transition-all shadow-sm"
+              >
+                {language === 'tr' ? 'Şimdi İncele' : 'Review Now'}
+              </button>
+            </div>
+            <span className="material-symbols-outlined absolute -right-6 -bottom-6 text-[108px] opacity-10 text-indigo-650 dark:text-indigo-400 select-none">lightbulb</span>
+          </div>
+        </section>
+
+      </div>
+
       {/* Add Subscription Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">

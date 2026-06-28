@@ -17,11 +17,11 @@ const config: Config = {
         },
         background: {
           light: "#F8FAFC",   
-          dark: "#0F172A",    
+          dark: "#090d1a",    
         },
         surface: {
           light: "#FFFFFF",   
-          dark: "#1E293B",    
+          dark: "#131c35",    
         },
         text: {
           primary: "#0F172A",       

@@ -247,7 +247,7 @@ export default function AnalyticsPage() {
 
         {/* Summary Cards Bento-ish Layout */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs col-span-2 relative overflow-hidden">
+          <div className="bg-white dark:bg-[#131c35] p-5 rounded-2xl border border-slate-150/60 dark:border-[#232f4e] shadow-xs col-span-2 relative overflow-hidden">
             <div className="absolute right-[-10px] top-[-10px] w-24 h-24 bg-indigo-500/5 rounded-full blur-xl"></div>
             <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{t.totalMonthlySpend}</p>
             <div className="flex justify-between items-end mt-1">
@@ -258,7 +258,7 @@ export default function AnalyticsPage() {
             </div>
           </div>
           
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs">
+          <div className="bg-white dark:bg-[#131c35] p-5 rounded-2xl border border-slate-150/60 dark:border-[#232f4e] shadow-xs">
             <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{language === 'tr' ? 'Aktif' : 'Active'}</p>
             <span className="text-2xl font-black text-slate-800 dark:text-white mt-1 block">
               {subscriptions.filter((sub: any) => sub.status === 'Active').length}
@@ -266,7 +266,7 @@ export default function AnalyticsPage() {
             <p className="text-[10px] text-slate-400 dark:text-slate-550 mt-0.5">{language === 'tr' ? 'Abonelik' : 'Subscriptions'}</p>
           </div>
           
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs">
+          <div className="bg-white dark:bg-[#131c35] p-5 rounded-2xl border border-slate-150/60 dark:border-[#232f4e] shadow-xs">
             <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{language === 'tr' ? 'Gelecek 7 Gün' : 'Next 7 Days'}</p>
             <span className="text-2xl font-black text-rose-500 dark:text-rose-400 mt-1 block">
               {getCurrencySymbol('USD')}{next7DaysDue.toFixed(2)}
@@ -276,7 +276,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Spending Trends Chart */}
-        <section className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs">
+        <section className="bg-white dark:bg-[#131c35] p-5 rounded-2xl border border-slate-150/60 dark:border-[#232f4e] shadow-xs">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xs font-bold text-slate-400 dark:text-slate-550 uppercase tracking-widest">{t.monthlySpendingTrend}</h3>
             <div className="flex gap-1.5">
