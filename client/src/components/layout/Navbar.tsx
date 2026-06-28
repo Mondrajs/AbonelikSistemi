@@ -13,9 +13,9 @@ export const Navbar = () => {
   const t = translations[language];
 
   return (
-    <header className="h-20 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md border-b border-slate-100 dark:border-slate-900 flex items-center justify-between px-8 sticky top-0 z-40 transition-colors duration-300">
+    <header className="h-20 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md border-b border-slate-100 dark:border-slate-900 flex items-center justify-between px-4 sm:px-8 sticky top-0 z-40 transition-colors duration-300">
       {/* Search Bar */}
-      <div className="flex items-center bg-slate-50 dark:bg-slate-900/60 rounded-xl px-4 py-2 border border-slate-100 dark:border-slate-900 w-96 focus-within:border-indigo-500/50 focus-within:ring-2 focus-within:ring-indigo-500/10 transition-all duration-200">
+      <div className="hidden md:flex items-center bg-slate-50 dark:bg-slate-900/60 rounded-xl px-4 py-2 border border-slate-100 dark:border-slate-900 w-64 lg:w-96 focus-within:border-indigo-500/50 focus-within:ring-2 focus-within:ring-indigo-500/10 transition-all duration-200">
         <Search size={18} className="text-slate-400 dark:text-slate-500" />
         <input 
           type="text" 

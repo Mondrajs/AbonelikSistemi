@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Navbar } from '@/components/layout/Navbar';
+import { MobileNavbar } from '@/components/layout/MobileNavbar';
 import { useUserStore } from '@/store/useUserStore';
 import { useRouter } from 'next/navigation';
 
@@ -32,11 +33,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex h-screen w-full bg-background-light dark:bg-background-dark overflow-hidden">
       <Sidebar />
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden relative">
         <Navbar />
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto p-4 pb-20 lg:p-8">
           {children}
         </main>
+        <MobileNavbar />
       </div>
     </div>
   );

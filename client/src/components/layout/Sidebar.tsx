@@ -23,7 +23,7 @@ export const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-64 bg-white dark:bg-slate-950 border-r border-slate-100 dark:border-slate-900 flex flex-col h-screen transition-colors duration-300">
+    <aside className="hidden lg:flex w-64 bg-white dark:bg-slate-950 border-r border-slate-100 dark:border-slate-900 flex-col h-screen transition-colors duration-300">
       {/* Logo Section */}
       <div className="p-6 flex items-center gap-3">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">

@@ -1,0 +1,5 @@
+# Exclude system documentation and private credentials
+subspace_sistem_bilgileri.txt
+*.txt
+*.log
+.DS_Store
