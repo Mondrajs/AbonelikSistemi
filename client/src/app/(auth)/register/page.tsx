@@ -58,11 +58,14 @@ export default function RegisterPage() {
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      // Safe api url clean up to ensure /api suffix is present
+      const cleanApiUrl = apiUrl.endsWith('/api') ? apiUrl : `${apiUrl.replace(/\/$/, '')}/api`;
+
       const parts = fullName.trim().split(' ');
       const firstName = parts[0] || '';
       const lastName = parts.slice(1).join(' ') || '';
 
-      const response = await fetch(`${apiUrl}/auth/register`, {
+      const response = await fetch(`${cleanApiUrl}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,9 +73,22 @@ export default function RegisterPage() {
         body: JSON.stringify({ email, password, firstName, lastName }),
       });
 
+      // Handle non-ok status codes (e.g. 404, 500)
+      if (!response.ok) {
+        try {
+          const data = await response.json();
+          setError(data.message || 'Kayıt sırasında bir hata oluştu!');
+          setLoading(false);
+          return;
+        } catch (jsonErr) {
+          // If response is not JSON, throw to trigger fallback
+          throw new Error('Non-JSON response from server');
+        }
+      }
+
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
+      if (!data.success) {
         setError(data.message || 'Kayıt sırasında bir hata oluştu!');
         setLoading(false);
         return;
@@ -86,7 +102,7 @@ export default function RegisterPage() {
       // Redirect to dashboard
       router.push('/');
     } catch (err) {
-      console.warn('Backend connection failed, signing up via demo mode:', err);
+      console.warn('Backend connection failed or non-JSON response, signing up via demo mode:', err);
       // Fallback for demo when backend is not deployed
       loginUser(email, fullName);
       sessionStorage.setItem('subspace_session_active', 'true');

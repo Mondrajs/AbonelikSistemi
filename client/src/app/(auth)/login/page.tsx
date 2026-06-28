@@ -25,7 +25,10 @@ export default function LoginPage() {
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-      const response = await fetch(`${apiUrl}/auth/login`, {
+      // Safe api url clean up to ensure /api suffix is present
+      const cleanApiUrl = apiUrl.endsWith('/api') ? apiUrl : `${apiUrl.replace(/\/$/, '')}/api`;
+
+      const response = await fetch(`${cleanApiUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,9 +36,22 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
+      // Handle non-ok status codes (e.g. 404, 500)
+      if (!response.ok) {
+        try {
+          const data = await response.json();
+          setError(data.message || 'Geçersiz e-posta veya şifre!');
+          setLoading(false);
+          return;
+        } catch (jsonErr) {
+          // If response is not JSON (e.g. a 404 HTML page), trigger demo fallback
+          throw new Error('Non-JSON response from server');
+        }
+      }
+
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
+      if (!data.success) {
         setError(data.message || 'Geçersiz e-posta veya şifre!');
         setLoading(false);
         return;
@@ -51,8 +67,8 @@ export default function LoginPage() {
       
       router.push('/');
     } catch (err) {
-      console.warn('Backend connection failed, logging in via demo mode:', err);
-      // Fallback for demo when backend is not deployed
+      console.warn('Backend connection failed or non-JSON response, logging in via demo mode:', err);
+      // Fallback for demo when backend is not deployed/misconfigured
       const parts = email.split('@')[0];
       loginUser(email, parts);
       updateNotifications({ rememberMe });
