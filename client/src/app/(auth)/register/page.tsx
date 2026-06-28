@@ -82,11 +82,14 @@ export default function RegisterPage() {
       if (!response.ok) {
         try {
           const data = await response.json();
-          setError(data.message || 'Kayıt sırasında bir hata oluştu!');
+          if (data.message === 'User already exists' || data.message === 'user_already_exists') {
+            setError('Bu e-posta adresiyle zaten bir hesap oluşturulmuş! Lütfen giriş yapın.');
+          } else {
+            setError(data.message || 'Kayıt sırasında bir hata oluştu!');
+          }
           setLoading(false);
           return;
         } catch (jsonErr) {
-          // If response is not JSON, throw to trigger fallback
           throw new Error('Non-JSON response from server');
         }
       }
