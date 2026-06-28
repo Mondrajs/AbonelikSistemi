@@ -1,0 +1,33 @@
+"use client";
+import React, { useState, useEffect } from 'react';
+import { Sidebar } from '@/components/layout/Sidebar';
+import { Navbar } from '@/components/layout/Navbar';
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="flex h-screen w-full bg-slate-50 dark:bg-slate-950 overflow-hidden items-center justify-center">
+        {/* Sleek premium spinner / skeleton placeholder */}
+        <div className="w-8 h-8 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-screen w-full bg-background-light dark:bg-background-dark overflow-hidden">
+      <Sidebar />
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <Navbar />
+        <main className="flex-1 overflow-y-auto p-8">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}

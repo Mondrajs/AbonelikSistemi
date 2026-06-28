@@ -1,0 +1,73 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String             @id @default(uuid())
+  email         String             @unique
+  passwordHash  String
+  firstName        String
+  lastName         String
+  avatarUrl        String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  subscriptions    UserSubscription[]
+}
+
+model Plan {
+  id            String             @id @default(uuid())
+  name          String             @unique // Örn: Basic, Pro, Family
+  description   String?
+  price         Decimal            @db.Decimal(10, 2)
+  billingCycle  BillingCycle       // MONTHLY, YEARLY
+  features      String[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  subscriptions UserSubscription[]
+}
+
+model UserSubscription {
+  id          String             @id @default(uuid())
+  userId      String
+  planId      String
+  status      SubscriptionStatus // ACTIVE, CANCELED, PAST_DUE
+  startDate   DateTime           @default(now())
+  endDate     DateTime
+  autoRenew   Boolean            @default(true)
+  user        User               @relation(fields: [userId], references: [id])
+  plan        Plan               @relation(fields: [planId], references: [id])
+  analytics   Analytics[]
+  
+  @@index([userId])
+  @@index([planId])
+}
+
+model Analytics {
+  id                 String           @id @default(uuid())
+  userSubscriptionId String
+  metricType         String           // Örn: 'GB_USED', 'MEMBERS_ADDED'
+  value              Int              
+  recordedAt         DateTime         @default(now())
+  userSubscription   UserSubscription @relation(fields: [userSubscriptionId], references: [id])
+
+  @@index([userSubscriptionId])
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+}
