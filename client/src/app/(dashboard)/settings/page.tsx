@@ -1098,7 +1098,9 @@ export default function SettingsPage() {
               <button 
                 onClick={() => {
                   if (typeof window !== 'undefined') {
-                    localStorage.removeItem('user-storage');
+                    useUserStore.getState().logoutUser();
+                    sessionStorage.removeItem('subspace_session_active');
+                    localStorage.removeItem('subspace_auth_token');
                     window.location.href = '/login';
                   }
                 }}

@@ -45,11 +45,16 @@ export default function LoginPage() {
       if (!response.ok) {
         try {
           const data = await response.json();
-          setError(data.message || 'Geçersiz e-posta veya şifre!');
+          if (response.status === 404 || data.message === 'user_not_found') {
+            setError('Bu e-posta adresiyle kayıtlı bir hesap bulunamadı. Lütfen önce kayıt olun.');
+          } else if (response.status === 401 || data.message === 'incorrect_password') {
+            setError('Girdiğiniz şifre yanlış! Lütfen tekrar deneyin.');
+          } else {
+            setError(data.message || 'Geçersiz e-posta veya şifre!');
+          }
           setLoading(false);
           return;
         } catch (jsonErr) {
-          // If response is not JSON (e.g. a 404 HTML page), trigger demo fallback
           throw new Error('Non-JSON response from server');
         }
       }

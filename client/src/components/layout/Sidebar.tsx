@@ -89,7 +89,12 @@ export const Sidebar = () => {
             </div>
           </div>
           <button 
-            onClick={() => router.push('/login')}
+            onClick={() => {
+              useUserStore.getState().logoutUser();
+              sessionStorage.removeItem('subspace_session_active');
+              localStorage.removeItem('subspace_auth_token');
+              router.push('/login');
+            }}
             className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
             title={t.logout}
           >

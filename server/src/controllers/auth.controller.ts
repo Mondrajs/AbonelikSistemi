@@ -50,12 +50,12 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      return res.status(404).json({ success: false, message: 'user_not_found' });
     }
 
     const isPasswordValid = await comparePassword(password, user.passwordHash);
     if (!isPasswordValid) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      return res.status(401).json({ success: false, message: 'incorrect_password' });
     }
 
     const token = generateToken(user.id);
