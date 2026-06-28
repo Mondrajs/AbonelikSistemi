@@ -107,11 +107,8 @@ export default function RegisterPage() {
       // Redirect to dashboard
       router.push('/');
     } catch (err) {
-      console.warn('Backend connection failed or non-JSON response, signing up via demo mode:', err);
-      // Fallback for demo when backend is not deployed
-      loginUser(email, fullName);
-      sessionStorage.setItem('subspace_session_active', 'true');
-      router.push('/');
+      console.error('Backend connection failed:', err);
+      setError('Sunucu bağlantısı kurulamadı. Lütfen sunucunun çalıştığından emin olun.');
     } finally {
       setLoading(false);
     }

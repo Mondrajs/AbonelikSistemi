@@ -72,13 +72,8 @@ export default function LoginPage() {
       
       router.push('/');
     } catch (err) {
-      console.warn('Backend connection failed or non-JSON response, logging in via demo mode:', err);
-      // Fallback for demo when backend is not deployed/misconfigured
-      const parts = email.split('@')[0];
-      loginUser(email, parts);
-      updateNotifications({ rememberMe });
-      sessionStorage.setItem('subspace_session_active', 'true');
-      router.push('/');
+      console.error('Backend connection failed:', err);
+      setError('Sunucu bağlantısı kurulamadı. Lütfen sunucunun çalıştığından emin olun.');
     } finally {
       setLoading(false);
     }
