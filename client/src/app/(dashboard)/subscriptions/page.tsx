@@ -580,7 +580,7 @@ export default function SubscriptionsListPage() {
       </div>
 
       {/* Mobile Floating Action Button */}
-      <div className="lg:hidden fixed bottom-6 right-6 z-40">
+      <div className="lg:hidden fixed bottom-20 right-6 z-40">
         <button 
           onClick={() => setIsModalOpen(true)}
           className="w-14 h-14 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full shadow-xl flex items-center justify-center active:scale-95 transition-transform"

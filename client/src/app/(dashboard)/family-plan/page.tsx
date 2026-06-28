@@ -538,6 +538,17 @@ export default function FamilyPlanPage() {
                 style={{ width: `${(occupiedSeats / totalSeats) * 100}%` }}
               ></div>
             </div>
+
+            {/* Per Person Share Details */}
+            <div className="pt-3.5 mt-3.5 border-t border-white/10 flex justify-between items-center text-xs">
+              <span className="opacity-80 font-bold flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[16px] text-indigo-300">payments</span>
+                <span>{language === 'tr' ? 'Kişi Başına Düşen Pay:' : 'Per Person Share:'}</span>
+              </span>
+              <span className="font-black text-emerald-450 text-sm">
+                {currency}{( ((activeSub?.price || 0) / Math.max(1, members.length)) * (language === 'tr' ? 6 : 1) ).toFixed(2)}
+              </span>
+            </div>
           </section>
 
           {/* Family Members List Section */}
@@ -728,7 +739,7 @@ export default function FamilyPlanPage() {
 
       {/* Success Toast Alert */}
       {showToast && (
-        <div className="fixed bottom-6 right-6 bg-white dark:bg-[#131c35] text-slate-900 dark:text-white p-4 rounded-2xl shadow-xl flex items-center gap-2.5 border border-slate-200 dark:border-[#232f4e] animate-in slide-in-from-bottom duration-300 z-50 max-w-sm">
+        <div className="fixed bottom-20 right-6 bg-white dark:bg-[#131c35] text-slate-900 dark:text-white p-4 rounded-2xl shadow-xl flex items-center gap-2.5 border border-slate-200 dark:border-[#232f4e] animate-in slide-in-from-bottom duration-300 z-50 max-w-sm">
           <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
           <div className="text-xs flex-1">
             <p className="font-bold">{language === 'tr' ? 'Üye Başarıyla Eklendi!' : 'Member Added Successfully!'}</p>
@@ -739,7 +750,7 @@ export default function FamilyPlanPage() {
 
       {/* Reminder Toast Alert */}
       {reminderToast && (
-        <div className="fixed bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-2xl shadow-xl flex items-center gap-2.5 animate-in slide-in-from-bottom duration-300 z-50 max-w-sm font-semibold border border-indigo-500">
+        <div className="fixed bottom-20 right-6 bg-indigo-600 text-white p-4 rounded-2xl shadow-xl flex items-center gap-2.5 animate-in slide-in-from-bottom duration-300 z-50 max-w-sm font-semibold border border-indigo-500">
           <BellRing className="w-5 h-5 text-indigo-200 shrink-0 animate-bounce" />
           <span className="text-xs">{reminderToast}</span>
         </div>
