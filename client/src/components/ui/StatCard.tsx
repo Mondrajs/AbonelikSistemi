@@ -7,11 +7,12 @@ interface StatCardProps {
   icon: LucideIcon;
   trend?: string;
   trendUp?: boolean;
+  className?: string;
 }
 
-export const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, trend, trendUp }) => {
+export const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, trend, trendUp, className }) => {
   return (
-    <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+    <div className={`bg-surface-light dark:bg-surface-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm ${className || ''}`}>
       <div className="flex items-center justify-between mb-4">
         <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-primary">
           <Icon size={24} />

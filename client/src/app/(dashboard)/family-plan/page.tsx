@@ -226,22 +226,22 @@ export default function FamilyPlanPage() {
 
               <div className="divide-y divide-slate-100 dark:divide-slate-900">
                 {members.map((member) => (
-                  <div key={member.id} className="flex items-center justify-between px-6 py-4 hover:bg-slate-55/30 dark:hover:bg-slate-900/10 transition-colors">
-                    <div className="flex items-center gap-3.5">
+                  <div key={member.id} className="flex items-center justify-between px-3 sm:px-6 py-4 hover:bg-slate-55/30 dark:hover:bg-slate-900/10 transition-colors gap-2 sm:gap-4">
+                    <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
                       {/* Profile avatar / initials */}
                       {member.avatar ? (
-                        <div className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-slate-100 dark:ring-slate-900">
+                        <div className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-slate-100 dark:ring-slate-900 shrink-0">
                           <img src={member.avatar} alt={member.name} className="w-full h-full object-cover" />
                         </div>
                       ) : (
-                        <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center font-bold text-sm text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800">
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center font-bold text-sm text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 shrink-0">
                           {member.name.charAt(0)}
                         </div>
                       )}
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-bold text-slate-900 dark:text-white">{member.name}</p>
-                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{member.name}</p>
+                          <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
                             member.role === 'Owner' 
                               ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600' 
                               : member.role === 'Admin'
@@ -251,18 +251,18 @@ export default function FamilyPlanPage() {
                             {getRoleLabel(member.role)}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1 mt-0.5">
-                          <Mail size={12} /> {member.email}
+                        <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1 mt-0.5 truncate">
+                          <Mail size={12} className="shrink-0" /> <span className="truncate">{member.email}</span>
                         </p>
-                        <p className="text-[10px] text-indigo-650 dark:text-indigo-400 font-bold mt-1.5 flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-                          <span>{language === 'tr' ? 'Kişi Başı Payı:' : 'Per Person Share:'} {currency}{( (activeSub?.price || 0) / Math.max(1, members.length) * (language === 'tr' ? 6 : 1) ).toFixed(2)}</span>
+                        <p className="text-[10px] text-indigo-650 dark:text-indigo-400 font-bold mt-1.5 flex items-center gap-1 flex-wrap">
+                          <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse shrink-0"></span>
+                          <span>{language === 'tr' ? 'Payı:' : 'Share:'} {currency}{( (activeSub?.price || 0) / Math.max(1, members.length) * (language === 'tr' ? 6 : 1) ).toFixed(2)}</span>
                         </p>
 
                         {/* Monthly Payment Checklist Tracker */}
-                        <div className="flex flex-wrap items-center gap-1.5 mt-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800/60 w-fit">
-                          <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1 mr-1">
-                            {language === 'tr' ? 'Fatura Takibi:' : 'Billing Tracker:'}
+                        <div className="flex flex-wrap items-center gap-1 mt-2 bg-slate-50 dark:bg-slate-900/50 p-1 rounded-xl border border-slate-100 dark:border-slate-800/60 w-fit">
+                          <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1 mr-0.5 hidden xs:inline">
+                            {language === 'tr' ? 'Takip:' : 'Track:'}
                           </span>
                           {rollingMonths.map((month) => {
                             const isPaid = member.payments?.[month] ?? false;
@@ -270,13 +270,13 @@ export default function FamilyPlanPage() {
                               <button
                                 key={month}
                                 onClick={() => togglePayment(currentSubId, member.id, month)}
-                                className={`text-[9px] font-extrabold px-2 py-0.5 rounded-lg border transition-all ${
+                                className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded transition-all ${
                                   isPaid 
                                     ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 border-emerald-100 dark:border-emerald-500/20' 
                                     : 'bg-rose-50 dark:bg-rose-500/10 text-rose-500 dark:text-rose-450 border-rose-100/50 dark:border-rose-500/25'
                                 }`}
                               >
-                                {month} {isPaid ? '✓' : '✗'}
+                                {month.slice(0, 3)} {isPaid ? '✓' : '✗'}
                               </button>
                             );
                           })}
@@ -284,7 +284,7 @@ export default function FamilyPlanPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-6 relative">
+                    <div className="flex items-center gap-2 sm:gap-6 relative shrink-0">
                       {/* Remind button */}
                       {member.role !== 'Owner' && (
                         <button
@@ -293,21 +293,24 @@ export default function FamilyPlanPage() {
                           title={language === 'tr' ? 'Ödeme Hatırlatması Gönder' : 'Send Payment Reminder'}
                         >
                           <BellRing className="w-3.5 h-3.5" />
-                          <span>{language === 'tr' ? 'Hatırlat' : 'Remind'}</span>
+                          <span className="hidden xs:inline">{language === 'tr' ? 'Hatırlat' : 'Remind'}</span>
                         </button>
                       )}
                       
                       {/* Status badge */}
                       <div className="flex items-center gap-1">
-                        {member.status === 'Active' ? (
-                          <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-lg">
-                            <CheckCircle2 className="w-3.5 h-3.5" /> {t.active}
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-semibold bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 rounded-lg">
-                            <Clock className="w-3.5 h-3.5" /> {t.pending}
-                          </span>
-                        )}
+                        <span className={`sm:hidden w-2.5 h-2.5 rounded-full shrink-0 ${member.status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'}`} title={member.status}></span>
+                        <div className="hidden sm:flex items-center gap-1">
+                          {member.status === 'Active' ? (
+                            <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-lg">
+                              <CheckCircle2 className="w-3.5 h-3.5" /> {t.active}
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-semibold bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 rounded-lg">
+                              <Clock className="w-3.5 h-3.5" /> {t.pending}
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Action dropdown */}
@@ -326,7 +329,7 @@ export default function FamilyPlanPage() {
                               </button>
                               <button 
                                 onClick={() => handleRemove(member.id)}
-                                className="w-full text-left px-4 py-2 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 flex items-center gap-1.5"
+                                className="w-full text-left px-4 py-2 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-955/20 flex items-center gap-1.5"
                               >
                                 <UserMinus className="w-3.5 h-3.5" /> {t.remove}
                               </button>

@@ -10,6 +10,7 @@ export default function LoginPage() {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
   const loginUser = useUserStore((state) => state.loginUser);
+  const updateNotifications = useUserStore((state) => state.updateNotifications);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState(user.email || '');
   const [password, setPassword] = useState('');
@@ -18,6 +19,8 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     loginUser(email, email.split('@')[0]);
+    updateNotifications({ rememberMe });
+    sessionStorage.setItem('subspace_session_active', 'true');
     // Redirect to dashboard on login submit
     router.push('/');
   };

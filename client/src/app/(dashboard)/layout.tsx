@@ -16,8 +16,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, []);
 
   useEffect(() => {
-    if (mounted && !user.email) {
-      router.push('/login');
+    if (mounted) {
+      const sessionActive = sessionStorage.getItem('subspace_session_active');
+      const rememberMe = useUserStore.getState().notifications.rememberMe;
+
+      if (user.email) {
+        if (!rememberMe && !sessionActive) {
+          useUserStore.getState().logoutUser();
+          router.push('/login');
+        } else {
+          sessionStorage.setItem('subspace_session_active', 'true');
+        }
+      } else {
+        router.push('/login');
+      }
     }
   }, [mounted, user, router]);
 

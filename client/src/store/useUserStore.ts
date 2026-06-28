@@ -26,6 +26,7 @@ export interface NotificationSettings {
   usdRate: number;      // Exchange rate USD -> TRY
   eurRate: number;      // Exchange rate EUR -> TRY
   baseCurrency: string; // The primary base currency selected by the user (TRY, USD, EUR)
+  rememberMe: boolean;  // Whether to remember the session or not
 }
 
 interface UserState {
@@ -61,7 +62,8 @@ const defaultNotifications: NotificationSettings = {
   monthlyLimit: 1000, // Default limit is 1000 TL
   usdRate: 33,        // Default USD rate
   eurRate: 35,        // Default EUR rate
-  baseCurrency: 'TRY' // Default base currency is TRY
+  baseCurrency: 'TRY', // Default base currency is TRY
+  rememberMe: false   // Default rememberMe is false
 };
 
 export const useUserStore = create<UserState>()(

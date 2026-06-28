@@ -14,6 +14,7 @@ import { useSubscriptionStore } from '@/store/useSubscriptionStore';
 import { useUserStore } from '@/store/useUserStore';
 import { convertToTry, getCurrencySymbol } from '@/utils/currency';
 import { AlertTriangle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 // Initial Mock Data
 const initialSubscriptions = [
@@ -24,6 +25,7 @@ const initialSubscriptions = [
 ];
 
 export default function Dashboard() {
+  const router = useRouter();
   const language = useLanguageStore((state) => state.language);
   const t = translations[language as 'tr' | 'en'];
   const user = useUserStore((state) => state.user);
@@ -218,11 +220,11 @@ export default function Dashboard() {
       </div>
 
       {/* Top Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title={t.totalMonthlySpend} value={`${getCurrencySymbol(notifications.baseCurrency || 'TRY')}${totalMonthlySpend.toFixed(2)}`} icon={Wallet} trend={`4.2% ${t.spent}`} trendUp={false} />
-        <StatCard title={t.activeSubscriptions} value={activeSubsCount.toString()} icon={CreditCard} trend={`1 ${t.newTrend}`} trendUp={true} />
-        <StatCard title={t.potentialSavings} value={`${getCurrencySymbol(notifications.baseCurrency || 'TRY')}420.00`} icon={Sparkles} trend="12%" trendUp={true} />
-        <StatCard title={t.overallLimitStatus} value={`${Math.round(Math.min(100, (totalMonthlySpend / (notifications.monthlyLimit || 1000)) * 100))}%`} icon={Activity} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <StatCard className="col-span-2 lg:col-span-1" title={t.totalMonthlySpend} value={`${getCurrencySymbol(notifications.baseCurrency || 'TRY')}${totalMonthlySpend.toFixed(2)}`} icon={Wallet} trend={`4.2% ${t.spent}`} trendUp={false} />
+        <StatCard className="col-span-1 lg:col-span-1" title={t.activeSubscriptions} value={activeSubsCount.toString()} icon={CreditCard} trend={`1 ${t.newTrend}`} trendUp={true} />
+        <StatCard className="col-span-1 lg:col-span-1" title={t.potentialSavings} value={`${getCurrencySymbol(notifications.baseCurrency || 'TRY')}420.00`} icon={Sparkles} trend="12%" trendUp={true} />
+        <StatCard className="col-span-2 lg:col-span-1" title={t.overallLimitStatus} value={`${Math.round(Math.min(100, (totalMonthlySpend / (notifications.monthlyLimit || 1000)) * 100))}%`} icon={Activity} />
       </div>
 
       {/* Main 2-Column Grid */}
@@ -280,7 +282,8 @@ export default function Dashboard() {
               </Link>
             </div>
             
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50/50 dark:bg-slate-900/20 text-slate-400 dark:text-slate-500 text-xs font-semibold uppercase">
@@ -331,7 +334,7 @@ export default function Dashboard() {
                       <td className="px-6 py-4 text-right relative">
                         <button 
                           onClick={() => setActiveDropdown(activeDropdown === sub.id ? null : sub.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-950 transition-colors"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-955 transition-colors"
                         >
                           <MoreVertical className="w-4 h-4" />
                         </button>
@@ -345,7 +348,7 @@ export default function Dashboard() {
                             </button>
                             <button 
                               onClick={() => handleDeleteSub(sub.id)}
-                              className="block w-full text-left px-4 py-2 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20"
+                              className="block w-full text-left px-4 py-2 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-955/20"
                             >
                               {t.delete}
                             </button>
@@ -356,6 +359,43 @@ export default function Dashboard() {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card List View */}
+            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-900 px-4">
+              {subList.map((sub) => {
+                const isPlanActive = sub.status === 'Active';
+                return (
+                  <div key={sub.id} className="py-4 flex items-center justify-between gap-3" onClick={() => router.push(`/subscriptions/${sub.id}`)}>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 shadow-sm ${sub.color}`}>
+                        {sub.logo}
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-semibold text-sm text-slate-800 dark:text-slate-100 block truncate">{sub.name}</span>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className="text-[9px] font-bold bg-slate-50 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 px-1 py-0.2 rounded uppercase">
+                            {getCategoryName(sub.category)}
+                          </span>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold">• {sub.nextBilling ? new Date(sub.nextBilling).toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US', { month: 'short', day: 'numeric' }) : ''}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className="font-bold text-sm text-slate-800 dark:text-slate-100 block">
+                        {getCurrencySymbol(sub.currency)}{sub.price.toFixed(2)}
+                      </span>
+                      <span className={`text-[8px] font-bold px-1.5 py-0.2 rounded uppercase ${
+                        isPlanActive 
+                          ? 'bg-emerald-500/10 text-emerald-500' 
+                          : 'bg-slate-500/10 text-slate-500'
+                      }`}>
+                        {isPlanActive ? (language === 'tr' ? 'Aktif' : 'Active') : (language === 'tr' ? 'Pasif' : 'Passive')}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

@@ -369,7 +369,7 @@ export default function SubscriptionsListPage() {
 
       {/* Grid Headers (Visible in list view) */}
       {viewMode === 'list' && filteredSubs.length > 0 && (
-        <div className="grid grid-cols-12 px-6 text-[10px] font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase select-none">
+        <div className="hidden sm:grid grid-cols-12 px-6 text-[10px] font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase select-none">
           <div className="col-span-5">{language === 'tr' ? 'HİZMET / PLAN' : 'SERVICE / PLAN'}</div>
           <div className="col-span-2 text-center">{language === 'tr' ? 'DURUM' : 'STATUS'}</div>
           <div className="col-span-3 text-center">{language === 'tr' ? 'SIRADAKİ ÖDEME' : 'NEXT BILLING'}</div>
@@ -380,7 +380,7 @@ export default function SubscriptionsListPage() {
       {/* Subscriptions List Card container */}
       <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-3'}>
         {filteredSubs.length === 0 ? (
-          <div className="p-16 text-center space-y-4 bg-white dark:bg-slate-950 rounded-3xl border border-slate-100 dark:border-slate-900">
+          <div className="p-16 text-center space-y-4 bg-white dark:bg-slate-955 bg-white dark:bg-slate-950 rounded-3xl border border-slate-100 dark:border-slate-900">
             <AlertCircle className="w-10 h-10 text-slate-300 dark:text-slate-700 mx-auto" />
             <p className="text-xs text-slate-450 dark:text-slate-500 font-semibold">
               {language === 'tr' ? 'Aradığınız kriterlere uygun abonelik bulunamadı.' : 'No subscriptions match your filter criteria.'}
@@ -395,19 +395,19 @@ export default function SubscriptionsListPage() {
                 className={`bg-white dark:bg-slate-950 p-4 border border-slate-100 dark:border-slate-900 rounded-2xl shadow-xs transition-all hover:border-slate-200 dark:hover:border-slate-800 cursor-pointer flex ${
                   viewMode === 'grid' 
                     ? 'flex-col justify-between h-48 gap-4' 
-                    : 'items-center justify-between gap-4'
+                    : 'flex-row items-center justify-between gap-4'
                 }`}
               >
                 {/* Left Panel / Top Section: Logo & Name */}
-                <div onClick={() => router.push(`/subscriptions/${sub.id}`)} className={`flex items-center gap-3.5 ${viewMode === 'list' ? 'col-span-5 w-[40%]' : ''}`}>
+                <div onClick={() => router.push(`/subscriptions/${sub.id}`)} className={`flex items-center gap-3.5 ${viewMode === 'list' ? 'w-full sm:w-[40%]' : ''}`}>
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 shadow-sm ${sub.color}`}>
                     {sub.logo}
                   </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <h3 className="text-xs font-black text-slate-850 dark:text-white truncate">{sub.name}</h3>
                       {sub.isFamilyPlan && (
-                        <span className="text-[8px] font-extrabold bg-indigo-650/10 text-indigo-600 dark:text-indigo-400 px-1 py-0.2 rounded uppercase tracking-wider">
+                        <span className="text-[8px] font-extrabold bg-indigo-650/10 text-indigo-600 dark:text-indigo-400 px-1 py-0.2 rounded uppercase tracking-wider shrink-0">
                           {language === 'tr' ? 'Aile' : 'Family'}
                         </span>
                       )}
@@ -415,11 +415,26 @@ export default function SubscriptionsListPage() {
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium truncate mt-0.5">
                       {getPlanDescription(sub.name, sub.category)}
                     </p>
+                    
+                    {/* Only show on mobile when in list view */}
+                    {viewMode === 'list' && (
+                      <div className="sm:hidden flex items-center gap-1.5 mt-1.5 flex-wrap">
+                        <span className="text-[9px] font-extrabold text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/40 px-1.5 py-0.5 rounded">
+                          {formatSubPrice(sub.price, sub.currency)}
+                        </span>
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider bg-slate-50 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400">
+                          {t[sub.category as keyof typeof t] || sub.category}
+                        </span>
+                        <span className="text-[10px] text-slate-455 dark:text-slate-500 font-semibold">
+                          • {isPlanActive ? getFormattedDate(sub.nextBilling) : (language === 'tr' ? 'İptal' : 'Canceled')}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Status Pill */}
-                <div className={`flex justify-center ${viewMode === 'list' ? 'w-[15%]' : ''}`}>
+                <div className={`flex justify-center ${viewMode === 'list' ? 'hidden sm:flex sm:w-[15%]' : ''}`}>
                   <span className={`text-[9px] font-black px-2.5 py-0.8 rounded-lg tracking-wider uppercase border ${
                     isPlanActive 
                       ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
@@ -432,7 +447,7 @@ export default function SubscriptionsListPage() {
                 {/* Next Billing Date */}
                 <div className={`flex items-center justify-center gap-1.5 text-xs font-bold ${
                   isPlanActive ? 'text-slate-650 dark:text-slate-350' : 'text-slate-400 dark:text-slate-500'
-                } ${viewMode === 'list' ? 'w-[25%]' : ''}`}>
+                } ${viewMode === 'list' ? 'hidden sm:flex sm:w-[25%]' : ''}`}>
                   {isPlanActive ? (
                     <>
                       <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-slate-550" />
@@ -444,8 +459,8 @@ export default function SubscriptionsListPage() {
                 </div>
 
                 {/* Cost & Chevron Option */}
-                <div className={`flex items-center justify-end gap-4 ${viewMode === 'list' ? 'w-[20%]' : ''}`}>
-                  <span className="text-sm font-black text-slate-850 dark:text-white">
+                <div className={`flex items-center justify-end gap-4 ${viewMode === 'list' ? 'w-auto sm:w-[20%]' : ''}`}>
+                  <span className={`text-sm font-black text-slate-850 dark:text-white ${viewMode === 'list' ? 'hidden sm:inline' : ''}`}>
                     {formatSubPrice(sub.price, sub.currency)}
                   </span>
                   <div className="flex items-center gap-2">
