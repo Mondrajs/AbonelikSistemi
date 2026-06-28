@@ -73,7 +73,12 @@ export default function RegisterPage() {
         body: JSON.stringify({ email, password, firstName, lastName }),
       });
 
-      // Handle non-ok status codes (e.g. 404, 500)
+      // Handle server crash or database down (500+)
+      if (response.status >= 500) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      // Handle non-ok status codes (e.g. 404, 401)
       if (!response.ok) {
         try {
           const data = await response.json();
