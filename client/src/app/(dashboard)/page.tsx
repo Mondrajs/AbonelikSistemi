@@ -69,6 +69,19 @@ export default function Dashboard() {
     }))
     .slice(0, 3); // top 3 upcoming
 
+  // Find next upcoming payment for mobile view
+  const upcomingSorted = [...allSubscriptions]
+    .filter(sub => sub.status === 'Active')
+    .sort((a, b) => new Date(a.nextBilling).getTime() - new Date(b.nextBilling).getTime());
+  
+  const nextPaymentSub = upcomingSorted[0];
+  const nextPaymentDateStr = nextPaymentSub
+    ? new Date(nextPaymentSub.nextBilling).toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US', {
+        day: 'numeric',
+        month: 'long'
+      })
+    : '-';
+
   // Dynamic Category Breakdown Data
   const categoryCosts = allSubscriptions
     .filter(sub => sub.status === 'Active')
@@ -174,8 +187,12 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto animate-in fade-in duration-150">
-      {/* Budget cap warning banner */}
+    <div className="space-y-6 max-w-[1600px] mx-auto animate-in fade-in duration-150">
+      
+      {/* DESKTOP VIEW */}
+      <div className="hidden lg:block space-y-6">
+        
+        {/* Budget cap warning banner */}
       {totalMonthlySpend > (notifications.monthlyLimit || 1000) && (
         <div className="bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-450 px-4 py-3.5 rounded-2xl flex items-center justify-between gap-3 animate-pulse">
           <div className="flex items-center gap-2.5">
@@ -473,6 +490,167 @@ export default function Dashboard() {
 
         </div>
 
+      </div>
+      </div>
+      {/* END DESKTOP VIEW */}
+
+      {/* MOBILE VIEW (matching panel_mobil/code.html) */}
+      <div className="lg:hidden space-y-6 pb-12">
+        {/* Budget cap warning banner for mobile */}
+        {totalMonthlySpend > (notifications.monthlyLimit || 1000) && (
+          <div className="bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-4.5 px-4 py-3 rounded-2xl flex items-center justify-between gap-3 animate-pulse">
+            <div className="flex items-center gap-2.5">
+              <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0" />
+              <span className="text-xs font-bold leading-relaxed">
+                {language === 'tr' ? `Limit Aşımı! (${notifications.monthlyLimit} TL)` : `Limit Exceeded! (${notifications.monthlyLimit} TL)`}
+              </span>
+            </div>
+          </div>
+        )}
+
+        <div>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans']">
+            {language === 'tr' ? 'Finansal Genel Bakış' : 'Financial Overview'}
+          </h2>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+            {language === 'tr' ? 'Harcamalarınız ve abonelikleriniz' : 'Your spending patterns and subscriptions'}
+          </p>
+        </div>
+
+        {/* Dashboard Summary Bento Grid */}
+        <section>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Total Spend */}
+            <div className="col-span-2 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs flex flex-col justify-between h-32 relative overflow-hidden">
+              <div className="absolute right-[-10px] top-[-10px] w-24 h-24 bg-indigo-500/5 rounded-full blur-xl"></div>
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{t.totalMonthlySpend}</p>
+                <h2 className="text-3xl font-black text-slate-800 dark:text-white mt-1">
+                  {getCurrencySymbol(notifications.baseCurrency || 'TRY')}{totalMonthlySpend.toFixed(2)}
+                </h2>
+              </div>
+              <div className="flex items-center gap-1 text-emerald-500 dark:text-emerald-450 text-xs font-bold">
+                <span className="material-symbols-outlined text-[16px]">trending_down</span>
+                <span>%4 {language === 'tr' ? 'geçen aya göre' : 'vs last month'}</span>
+              </div>
+            </div>
+
+            {/* Active Count */}
+            <div className="bg-slate-900 dark:bg-slate-950 p-5 rounded-2xl border border-slate-800/60 dark:border-slate-900/80 shadow-xs flex flex-col justify-between h-36 relative overflow-hidden">
+              <div className="absolute right-[-10px] top-[-10px] w-20 h-20 bg-indigo-500/10 rounded-full blur-xl"></div>
+              <span className="material-symbols-outlined text-indigo-400 text-[24px]">subscriptions</span>
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-550 uppercase tracking-wider">{t.activeSubscriptions}</p>
+                <h3 className="text-2xl font-black text-white mt-1">{activeSubsCount}</h3>
+              </div>
+            </div>
+
+            {/* Next Payment */}
+            <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs flex flex-col justify-between h-36 relative overflow-hidden">
+              <div className="absolute right-[-10px] top-[-10px] w-20 h-20 bg-rose-500/5 rounded-full blur-xl"></div>
+              <span className="material-symbols-outlined text-rose-500 text-[24px]">event</span>
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{language === 'tr' ? 'Sıradaki Ödeme' : 'Next Due'}</p>
+                <h3 className="text-sm font-bold text-slate-800 dark:text-white mt-2 truncate">
+                  {nextPaymentSub ? nextPaymentSub.name : '-'}
+                </h3>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{nextPaymentSub ? nextPaymentDateStr : ''}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick Actions */}
+        <section className="space-y-3">
+          <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{language === 'tr' ? 'Hızlı Eylemler' : 'Quick Actions'}</h3>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="w-full bg-slate-900 hover:bg-slate-850 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 active:scale-98 transition-all shadow-md shadow-slate-900/5 dark:shadow-none"
+          >
+            <span className="material-symbols-outlined">add_circle</span>
+            <span className="text-xs font-black">{language === 'tr' ? 'Yeni Abonelik Ekle' : 'Add Subscription'}</span>
+          </button>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <button 
+              onClick={() => router.push('/analytics')}
+              className="bg-white hover:bg-slate-55 dark:bg-slate-900 dark:hover:bg-slate-850/60 p-3 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 flex items-center gap-2 transition-colors"
+            >
+              <span className="material-symbols-outlined text-slate-400 dark:text-slate-550">analytics</span>
+              <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">{t.analytics}</span>
+            </button>
+            <button 
+              onClick={() => router.push('/family-plan')}
+              className="bg-white hover:bg-slate-55 dark:bg-slate-900 dark:hover:bg-slate-850/60 p-3 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 flex items-center gap-2 transition-colors"
+            >
+              <span className="material-symbols-outlined text-slate-400 dark:text-slate-550">group</span>
+              <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">{t.familyPlan}</span>
+            </button>
+          </div>
+        </section>
+
+        {/* Upcoming Payments */}
+        <section className="space-y-3">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{language === 'tr' ? 'Yaklaşan Ödemeler' : 'Upcoming Payments'}</h3>
+            <button onClick={() => router.push('/subscriptions')} className="text-[10px] font-extrabold text-indigo-600 dark:text-indigo-400 hover:underline">
+              {t.viewAll.toUpperCase()}
+            </button>
+          </div>
+          
+          <div className="space-y-3">
+            {subList.slice(0, 3).map((sub) => {
+              const isPlanActive = sub.status === 'Active';
+              return (
+                <div 
+                  key={sub.id} 
+                  onClick={() => router.push(`/subscriptions/${sub.id}`)}
+                  className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 flex items-center justify-between shadow-xs hover:border-slate-300/80 transition-all cursor-pointer"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 shadow-xs ${sub.color}`}>
+                      {sub.logo}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-black text-slate-850 dark:text-white truncate">{sub.name}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 truncate">
+                        {isPlanActive ? `${language === 'tr' ? 'Ödeme: ' : 'Due '} ${new Date(sub.nextBilling).toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'short' })}` : (language === 'tr' ? 'Pasif' : 'Passive')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-xs font-bold text-slate-800 dark:text-white">
+                      {getCurrencySymbol(sub.currency)}{sub.price.toFixed(2)}
+                    </p>
+                    <span className={`inline-block text-[8px] font-bold px-1.5 py-0.2 rounded mt-0.5 uppercase ${
+                      isPlanActive ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-500/10 text-slate-500'
+                    }`}>
+                      {isPlanActive ? (language === 'tr' ? 'Aktif' : 'Active') : (language === 'tr' ? 'Pasif' : 'Passive')}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Spend Insight Card */}
+        <section>
+          <div className="bg-indigo-50 dark:bg-indigo-950/20 p-5 rounded-2xl border border-indigo-100/50 dark:border-indigo-900/40 relative overflow-hidden">
+            <div className="relative z-10 pr-12">
+              <h4 className="text-xs font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-widest">{language === 'tr' ? 'Harcama Önerisi' : 'Spend Insight'}</h4>
+              <p className="text-xs text-indigo-700 dark:text-indigo-400 mt-1 leading-relaxed">
+                {language === 'tr' 
+                  ? "Eğlence kategorisindeki harcamalarınız bu ay %15 arttı. Kullanmadığınız üyelikleri iptal etmeyi düşünebilirsiniz." 
+                  : "Your 'Entertainment' category grew by 15% this month. Consider auditing unused trials."}
+              </p>
+              <button onClick={() => router.push('/analytics')} className="mt-3.5 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-xl text-[10px] font-black tracking-wider uppercase transition-colors">
+                {language === 'tr' ? 'İncele' : 'Review Now'}
+              </button>
+            </div>
+            <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[96px] opacity-10 text-indigo-600 dark:text-indigo-400 select-none">lightbulb</span>
+          </div>
+        </section>
       </div>
 
       {/* Add Subscription Modal */}

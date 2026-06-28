@@ -18,6 +18,24 @@ export default function AnalyticsPage() {
 
   // Retrieve dynamic subscriptions
   const subscriptions = useSubscriptionStore((state) => state.subscriptions);
+  
+  const getCurrencySymbol = (currency: string) => {
+    switch (currency) {
+      case 'USD': return '$';
+      case 'EUR': return '€';
+      case 'GBP': return '£';
+      case 'TRY': return '₺';
+      default: return '$';
+    }
+  };
+
+  // Next 7 days due amount
+  const sevenDaysLater = new Date();
+  sevenDaysLater.setDate(sevenDaysLater.getDate() + 7);
+  const next7DaysDue = subscriptions
+    .filter(sub => sub.status === 'Active' && sub.nextBilling && new Date(sub.nextBilling) <= sevenDaysLater)
+    .reduce((acc, sub) => acc + sub.price, 0);
+
   const totalSpent = subscriptions.reduce((acc, sub) => acc + sub.price, 0);
   const budgetLimit = 300.00;
   const percentSpent = Math.round((totalSpent / budgetLimit) * 100);
@@ -53,7 +71,10 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto animate-in fade-in duration-150">
-      {/* Header */}
+      
+      {/* DESKTOP VIEW */}
+      <div className="hidden lg:block space-y-8">
+        {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">{t.reportsAndAnalytics}</h1>
@@ -210,6 +231,131 @@ export default function AnalyticsPage() {
         </div>
 
       </div>
+      </div>
+      {/* END DESKTOP VIEW */}
+
+      {/* MOBILE VIEW (matching raporlar_mobil/code.html) */}
+      <div className="lg:hidden space-y-6 pb-12">
+        <section>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans']">
+            {language === 'tr' ? 'Finansal Raporlar' : 'Financial Insights'}
+          </h2>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+            {language === 'tr' ? 'Harcama analizleriniz ve limit takibi' : 'Your spending patterns and limits'}
+          </p>
+        </section>
+
+        {/* Summary Cards Bento-ish Layout */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs col-span-2 relative overflow-hidden">
+            <div className="absolute right-[-10px] top-[-10px] w-24 h-24 bg-indigo-500/5 rounded-full blur-xl"></div>
+            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{t.totalMonthlySpend}</p>
+            <div className="flex justify-between items-end mt-1">
+              <span className="text-3xl font-black text-slate-800 dark:text-white">
+                {getCurrencySymbol('USD')}{totalSpent.toFixed(2)}
+              </span>
+              <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">+4.2%</span>
+            </div>
+          </div>
+          
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs">
+            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{language === 'tr' ? 'Aktif' : 'Active'}</p>
+            <span className="text-2xl font-black text-slate-800 dark:text-white mt-1 block">
+              {subscriptions.filter((sub: any) => sub.status === 'Active').length}
+            </span>
+            <p className="text-[10px] text-slate-400 dark:text-slate-550 mt-0.5">{language === 'tr' ? 'Abonelik' : 'Subscriptions'}</p>
+          </div>
+          
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs">
+            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{language === 'tr' ? 'Gelecek 7 Gün' : 'Next 7 Days'}</p>
+            <span className="text-2xl font-black text-rose-500 dark:text-rose-400 mt-1 block">
+              {getCurrencySymbol('USD')}{next7DaysDue.toFixed(2)}
+            </span>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{language === 'tr' ? 'Yaklaşan' : 'Upcoming'}</p>
+          </div>
+        </div>
+
+        {/* Spending Trends Chart */}
+        <section className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-550 uppercase tracking-widest">{t.monthlySpendingTrend}</h3>
+            <div className="flex gap-1.5">
+              <button className="px-2 py-0.5 bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-lg text-[9px] font-bold">6M</button>
+              <button className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-lg text-[9px] font-bold">1Y</button>
+            </div>
+          </div>
+          
+          <div className="h-44 w-full relative flex items-end justify-between gap-3 px-1 pt-6">
+            {monthlySpending.map((item, idx) => {
+              const maxSpend = Math.max(...monthlySpending.map(m => m.spend)) || 1;
+              const barHeightPct = Math.round((item.spend / maxSpend) * 85);
+              const isActiveMonth = idx === monthlySpending.length - 1;
+              
+              return (
+                <div key={idx} className="flex-1 flex flex-col justify-end items-center h-full group relative">
+                  {/* Tooltip value */}
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white dark:bg-white dark:text-slate-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                    ${item.spend}
+                  </div>
+                  
+                  {/* Bar shape */}
+                  <div 
+                    style={{ height: `${barHeightPct}%` }}
+                    className={`w-full rounded-t-lg transition-all duration-300 ${
+                      isActiveMonth 
+                        ? 'bg-indigo-600 dark:bg-indigo-500 shadow-sm shadow-indigo-650/20' 
+                        : 'bg-indigo-100 dark:bg-indigo-900/30 group-hover:bg-indigo-200 dark:group-hover:bg-indigo-900/50'
+                    }`}
+                  ></div>
+                  
+                  {/* Label */}
+                  <span className={`text-[9px] font-bold mt-2 ${
+                    isActiveMonth ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500'
+                  }`}>
+                    {item.name.toUpperCase()}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Spending by Category */}
+        <section className="space-y-3">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-550 uppercase tracking-widest">{t.spendLimitsByCategory}</h3>
+          </div>
+          
+          <div className="space-y-3">
+            {categories.map((cat, idx) => {
+              const ratio = Math.min((cat.spent / cat.limit) * 100, 100);
+              return (
+                <div key={idx} className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-xs flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${cat.color}15` }}>
+                    <span className="material-symbols-outlined text-[20px]" style={{ color: cat.color }}>
+                      {cat.name === 'Entertainment' ? 'movie' : cat.name === 'Productivity' ? 'terminal' : 'bolt'}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between mb-1 text-xs font-bold">
+                      <span className="text-slate-850 dark:text-white truncate">{getCategoryName(cat.name)}</span>
+                      <span className="text-slate-850 dark:text-white shrink-0">${cat.spent.toFixed(2)}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full" style={{ width: `${ratio}%`, backgroundColor: cat.color }}></div>
+                    </div>
+                    <div className="flex justify-between text-[9px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">
+                      <span>{Math.round(ratio)}% {t.spent}</span>
+                      <span>limit: ${cat.limit}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </div>
+
     </div>
   );
 }
