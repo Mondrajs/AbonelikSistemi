@@ -38,10 +38,10 @@ interface UserState {
 }
 
 const defaultUser: UserProfile = {
-  firstName: 'Alex',
-  lastName: 'Johnson',
-  email: 'alex@example.com',
-  avatar: 'https://i.pravatar.cc/150?img=12'
+  firstName: '',
+  lastName: '',
+  email: '',
+  avatar: ''
 };
 
 const defaultNotifications: NotificationSettings = {

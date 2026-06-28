@@ -17,7 +17,7 @@ export default function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loginUser(email, `${user.firstName} ${user.lastName}`);
+    loginUser(email, email.split('@')[0]);
     // Redirect to dashboard on login submit
     router.push('/');
   };

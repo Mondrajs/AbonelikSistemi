@@ -2,15 +2,25 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Navbar } from '@/components/layout/Navbar';
+import { useUserStore } from '@/store/useUserStore';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
+  const user = useUserStore((state) => state.user);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
+  useEffect(() => {
+    if (mounted && !user.email) {
+      router.push('/login');
+    }
+  }, [mounted, user, router]);
+
+  if (!mounted || !user.email) {
     return (
       <div className="flex h-screen w-full bg-slate-50 dark:bg-slate-950 overflow-hidden items-center justify-center">
         {/* Sleek premium spinner / skeleton placeholder */}
