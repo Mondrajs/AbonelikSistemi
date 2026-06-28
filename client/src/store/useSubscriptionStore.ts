@@ -23,12 +23,7 @@ interface SubscriptionState {
   cancelSubscription: (id: string) => void;
 }
 
-const initialSubscriptions: Subscription[] = [
-  { id: 'spotify-family', name: 'Spotify Family', price: 90.00, status: 'Active', nextBilling: '2026-10-24', logo: 'S', color: 'bg-emerald-500 text-white', category: 'Entertainment', features: ['6 Accounts', 'Offline Play', 'Kids App Access'], isFamilyPlan: true, currency: 'TRY' },
-  { id: 'netflix', name: 'Netflix 4K', price: 220.00, status: 'Active', nextBilling: '2026-10-28', logo: 'N', color: 'bg-red-600 text-white', category: 'Entertainment', features: ['4K Streaming', '4 Devices', 'HDR Enabled'], currency: 'TRY' },
-  { id: 'adobe', name: 'Adobe Creative Cloud', price: 52.99, status: 'Past Due', nextBilling: '2026-10-15', logo: 'A', color: 'bg-indigo-600 text-white', category: 'Productivity', features: ['Photoshop', 'Illustrator', '100GB Cloud Storage'], currency: 'USD' },
-  { id: 'youtube', name: 'YouTube Premium', price: 79.99, status: 'Active', nextBilling: '2026-11-02', logo: 'Y', color: 'bg-rose-500 text-white', category: 'Entertainment', features: ['Ad-free video', 'Background play', 'YT Music Premium'], currency: 'TRY' },
-];
+const initialSubscriptions: Subscription[] = [];
 
 export const useSubscriptionStore = create<SubscriptionState>()(
   persist(
