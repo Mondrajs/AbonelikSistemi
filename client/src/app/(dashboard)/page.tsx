@@ -210,7 +210,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            {language === 'tr' ? `Tekrar hoş geldin, ${user.firstName}! 👋` : `Welcome back, ${user.firstName}! 👋`}
+            {language === 'tr' ? `Tekrar hoş geldin, ${user.firstName ? user.firstName.split(' ')[0] : ''}! 👋` : `Welcome back, ${user.firstName ? user.firstName.split(' ')[0] : ''}! 👋`}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1"
              dangerouslySetInnerHTML={{ 
@@ -351,7 +351,7 @@ export default function Dashboard() {
                       <td className="px-6 py-4 text-right relative">
                         <button 
                           onClick={() => setActiveDropdown(activeDropdown === sub.id ? null : sub.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-955 transition-colors"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
                         >
                           <MoreVertical className="w-4 h-4" />
                         </button>
@@ -710,7 +710,7 @@ export default function Dashboard() {
           </h3>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-955 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all text-xs shadow-md"
+            className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all text-xs shadow-md"
           >
             <span className="material-symbols-outlined text-[18px]">add_circle</span>
             {language === 'tr' ? 'Abonelik Ekle' : 'Add Subscription'}
@@ -873,7 +873,7 @@ export default function Dashboard() {
                   value={newSubName}
                   onChange={(e) => setNewSubName(e.target.value)}
                   placeholder="e.g. Xbox Game Pass"
-                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
               </div>
 
@@ -889,7 +889,7 @@ export default function Dashboard() {
                     value={newSubPrice}
                     onChange={(e) => setNewSubPrice(e.target.value)}
                     placeholder="e.g. 14.99"
-                    className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"
                   />
                 </div>
                 <div className="col-span-1 space-y-1">
@@ -899,11 +899,11 @@ export default function Dashboard() {
                   <select
                     value={newSubCurrency}
                     onChange={(e) => setNewSubCurrency(e.target.value)}
-                    className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                    className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none dark:bg-slate-950"
                   >
-                    <option value="TRY">TRY (₺)</option>
-                    <option value="USD">USD ($)</option>
-                    <option value="EUR">EUR (€)</option>
+                    <option className="dark:bg-slate-950 dark:text-white" value="TRY">TRY (₺)</option>
+                    <option className="dark:bg-slate-950 dark:text-white" value="USD">USD ($)</option>
+                    <option className="dark:bg-slate-950 dark:text-white" value="EUR">EUR (€)</option>
                   </select>
                 </div>
               </div>
@@ -915,11 +915,11 @@ export default function Dashboard() {
                 <select 
                   value={newSubCategory}
                   onChange={(e) => setNewSubCategory(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-850 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-850 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors dark:bg-slate-950"
                 >
-                  <option value="Entertainment">{t.Entertainment}</option>
-                  <option value="Productivity">{t.Productivity}</option>
-                  <option value="Utilities">{t.Utilities}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Entertainment">{t.Entertainment}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Productivity">{t.Productivity}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Utilities">{t.Utilities}</option>
                 </select>
               </div>
 
@@ -932,7 +932,7 @@ export default function Dashboard() {
                   required
                   value={newSubDate}
                   onChange={(e) => setNewSubDate(e.target.value)}
-                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
               </div>
 
@@ -943,10 +943,10 @@ export default function Dashboard() {
                 <select 
                   value={newSubStatus}
                   onChange={(e) => setNewSubStatus(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-850 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-855 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors dark:bg-slate-950"
                 >
-                  <option value="Active">{t.active}</option>
-                  <option value="Pending">{t.pending}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Active">{t.active}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Pending">{t.pending}</option>
                 </select>
               </div>
 
@@ -959,7 +959,7 @@ export default function Dashboard() {
                   value={newSubFeatures}
                   onChange={(e) => setNewSubFeatures(e.target.value)}
                   placeholder="e.g. Cloud Play, Free games"
-                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-850 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-855 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
               </div>
 

@@ -689,7 +689,7 @@ export default function SubscriptionsListPage() {
                   value={newSubName}
                   onChange={(e) => setNewSubName(e.target.value)}
                   placeholder="e.g. Spotify, Netflix"
-                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
               </div>
 
@@ -705,21 +705,21 @@ export default function SubscriptionsListPage() {
                     value={newSubPrice}
                     onChange={(e) => setNewSubPrice(e.target.value)}
                     placeholder="e.g. 14.99"
-                    className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"
                   />
                 </div>
                 <div className="col-span-1 space-y-1">
-                  <label className="text-xs font-bold text-slate-450 dark:text-slate-500 uppercase">
+                  <label className="text-xs font-bold text-slate-455 dark:text-slate-500 uppercase">
                     {language === 'tr' ? 'Para Birimi' : 'Currency'}
                   </label>
                   <select
                     value={newSubCurrency}
                     onChange={(e) => setNewSubCurrency(e.target.value)}
-                    className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                    className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-855 dark:text-slate-100 focus:outline-none dark:bg-slate-950"
                   >
-                    <option value="TRY">TRY (₺)</option>
-                    <option value="USD">USD ($)</option>
-                    <option value="EUR">EUR (€)</option>
+                    <option className="dark:bg-slate-950 dark:text-white" value="TRY">TRY (₺)</option>
+                    <option className="dark:bg-slate-950 dark:text-white" value="USD">USD ($)</option>
+                    <option className="dark:bg-slate-950 dark:text-white" value="EUR">EUR (€)</option>
                   </select>
                 </div>
               </div>
@@ -731,11 +731,11 @@ export default function SubscriptionsListPage() {
                 <select 
                   value={newSubCategory}
                   onChange={(e) => setNewSubCategory(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-850 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-855 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors dark:bg-slate-950"
                 >
-                  <option value="Entertainment">{t.Entertainment}</option>
-                  <option value="Productivity">{t.Productivity}</option>
-                  <option value="Utilities">{t.Utilities}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Entertainment">{t.Entertainment}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Productivity">{t.Productivity}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Utilities">{t.Utilities}</option>
                 </select>
               </div>
 
@@ -748,7 +748,7 @@ export default function SubscriptionsListPage() {
                   required
                   value={newSubDate}
                   onChange={(e) => setNewSubDate(e.target.value)}
-                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
               </div>
 
@@ -759,10 +759,10 @@ export default function SubscriptionsListPage() {
                 <select 
                   value={newSubStatus}
                   onChange={(e) => setNewSubStatus(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-850 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-855 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors dark:bg-slate-950"
                 >
-                  <option value="Active">{t.active}</option>
-                  <option value="Pending">{t.pending}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Active">{t.active}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Pending">{t.pending}</option>
                 </select>
               </div>
 
@@ -775,7 +775,7 @@ export default function SubscriptionsListPage() {
                   value={newSubFeatures}
                   onChange={(e) => setNewSubFeatures(e.target.value)}
                   placeholder="e.g. Cloud Play, Free games"
-                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-850 dark:text-slate-150 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-855 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
               </div>
 

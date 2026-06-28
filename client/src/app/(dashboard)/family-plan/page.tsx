@@ -347,7 +347,7 @@ export default function FamilyPlanPage() {
                               </button>
                               <button 
                                 onClick={() => handleRemove(member.id)}
-                                className="w-full text-left px-4 py-2 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-955/20 flex items-center gap-1.5"
+                                className="w-full text-left px-4 py-2 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 flex items-center gap-1.5"
                               >
                                 <UserMinus className="w-3.5 h-3.5" /> {t.remove}
                               </button>
@@ -362,7 +362,7 @@ export default function FamilyPlanPage() {
             </div>
 
             {/* Add New Member Form */}
-            <div className="bg-white dark:bg-slate-955 bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-100 dark:border-slate-900 shadow-sm">
+            <div className="bg-white dark:bg-[#131c35] p-6 rounded-2xl border border-slate-100 dark:border-[#232f4e] shadow-sm">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">
                 {language === 'tr' ? 'Yeni Üye Ekle' : 'Add New Member'}
               </h3>
@@ -597,7 +597,7 @@ export default function FamilyPlanPage() {
           <section className="pt-2 space-y-4">
             <button 
               onClick={() => setIsInviteModalOpen(true)}
-              className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-955 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all text-xs"
+              className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all text-xs"
             >
               <span className="material-symbols-outlined text-[18px]">person_add</span>
               {language === 'tr' ? 'Üye Davet Et' : 'Invite Member'}
@@ -637,7 +637,7 @@ export default function FamilyPlanPage() {
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   placeholder="e.g. name@family.com"
-                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
@@ -648,10 +648,10 @@ export default function FamilyPlanPage() {
                 <select
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-50/50 dark:bg-slate-900/60 text-slate-850 dark:text-slate-150 focus:outline-none"
+                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-900/60 text-slate-850 dark:text-slate-100 focus:outline-none dark:bg-slate-950"
                 >
-                  <option value="Member">{language === 'tr' ? 'Üye' : 'Member'}</option>
-                  <option value="Admin">{language === 'tr' ? 'Yönetici' : 'Admin'}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Member">{language === 'tr' ? 'Üye' : 'Member'}</option>
+                  <option className="dark:bg-slate-950 dark:text-white" value="Admin">{language === 'tr' ? 'Yönetici' : 'Admin'}</option>
                 </select>
               </div>
 
@@ -674,7 +674,7 @@ export default function FamilyPlanPage() {
 
       {/* Success Toast Alert */}
       {showToast && (
-        <div className="fixed bottom-6 right-6 bg-slate-900 dark:bg-slate-955 bg-white dark:bg-slate-950 text-white p-4 rounded-2xl shadow-xl flex items-center gap-2.5 border border-slate-800 animate-in slide-in-from-bottom duration-300 z-50 max-w-sm">
+        <div className="fixed bottom-6 right-6 bg-white dark:bg-[#131c35] text-slate-900 dark:text-white p-4 rounded-2xl shadow-xl flex items-center gap-2.5 border border-slate-200 dark:border-[#232f4e] animate-in slide-in-from-bottom duration-300 z-50 max-w-sm">
           <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
           <div className="text-xs flex-1">
             <p className="font-bold">{language === 'tr' ? 'Üye Başarıyla Eklendi!' : 'Member Added Successfully!'}</p>

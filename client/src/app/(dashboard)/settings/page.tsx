@@ -594,7 +594,7 @@ export default function SettingsPage() {
                       className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none"
                       placeholder="1000"
                     />
-                    <span className="text-xs font-bold text-slate-500">
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
                       {notifications.baseCurrency === 'TRY' ? 'TL (₺)' : notifications.baseCurrency === 'USD' ? 'USD ($)' : 'EUR (€)'}
                     </span>
                   </div>
@@ -725,30 +725,30 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-550 uppercase">{t.firstName}</label>
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{t.firstName}</label>
                   <input 
                     type="text" 
                     value={firstName} 
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                    className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-555 uppercase">{t.lastName}</label>
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{t.lastName}</label>
                   <input 
                     type="text" 
                     value={lastName} 
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                    className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-555 uppercase">{t.emailAddress}</label>
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{t.emailAddress}</label>
                   <input 
                     type="email" 
                     value={email} 
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-900 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                    className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none"
                   />
                 </div>
 
@@ -839,22 +839,22 @@ export default function SettingsPage() {
                   {notifications.telegramActive && (
                     <div className="pt-4 space-y-3 animate-in fade-in duration-200">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-400 dark:text-slate-555 uppercase">Bot Token</label>
+                        <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Bot Token</label>
                         <input 
                           type="text" 
                           value={notifications.telegramToken || ''} 
                           onChange={(e) => updateNotifications({ telegramToken: e.target.value })}
-                          className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                          className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none"
                           placeholder="123456:ABC-DEF"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-400 dark:text-slate-555 uppercase">Chat ID</label>
+                        <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Chat ID</label>
                         <input 
                           type="text" 
                           value={notifications.telegramChatId || ''} 
                           onChange={(e) => updateNotifications({ telegramChatId: e.target.value })}
-                          className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                          className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none"
                           placeholder="987654321"
                         />
                       </div>
@@ -877,11 +877,11 @@ export default function SettingsPage() {
               <form className="bg-white dark:bg-[#131c35] border border-slate-150/60 dark:border-[#232f4e] p-5 rounded-2xl space-y-4 shadow-xs">
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{t.currentPassword}</label>
-                  <input type="password" placeholder="••••••••" className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none" />
+                  <input type="password" placeholder="••••••••" className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{t.newPassword}</label>
-                  <input type="password" placeholder="••••••••" className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-905 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none" />
+                  <input type="password" placeholder="••••••••" className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none" />
                 </div>
                 <div className="pt-2">
                   <Button variant="primary" className="w-full text-xs py-3.5 shadow-md shadow-indigo-650/15">{t.updatePassword}</Button>
@@ -941,7 +941,7 @@ export default function SettingsPage() {
 
                 {/* Currency Select */}
                 <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800">
-                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{language === 'tr' ? 'Para Birimi' : 'Currency'}</label>
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-550 uppercase">{language === 'tr' ? 'Para Birimi' : 'Currency'}</label>
                   <div className="flex gap-2">
                     {['TRY', 'USD', 'EUR'].map((cur) => (
                       <button
@@ -951,12 +951,32 @@ export default function SettingsPage() {
                         className={`flex-1 py-2 text-xs font-bold rounded-xl border ${
                           (notifications.baseCurrency || 'TRY') === cur
                             ? 'border-indigo-650 text-indigo-650 bg-indigo-50/20 dark:text-indigo-400 dark:bg-indigo-500/10'
-                            : 'border-slate-200 dark:border-slate-800 text-slate-505'
+                            : 'border-slate-200 dark:border-slate-800 text-slate-550'
                         }`}
                       >
                         {cur === 'TRY' ? 'TL (₺)' : cur === 'USD' ? 'USD ($)' : 'EUR (€)'}
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                {/* Monthly Spending Limit (Budget Cap) */}
+                <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-550 uppercase">
+                    {language === 'tr' ? 'Aylık Harcama Limiti' : 'Monthly Spending Limit'}
+                  </label>
+                  <div className="relative flex items-center">
+                    <input 
+                      type="number"
+                      min="0"
+                      value={notifications.monthlyLimit || 1000}
+                      onChange={(e) => updateNotifications({ monthlyLimit: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-150 dark:border-slate-900 bg-slate-55/30 dark:bg-slate-900/60 text-slate-800 dark:text-slate-150 focus:outline-none"
+                      placeholder="1000"
+                    />
+                    <span className="absolute right-4 text-xs font-bold text-slate-400 dark:text-slate-500">
+                      {notifications.baseCurrency === 'TRY' ? 'TL' : notifications.baseCurrency === 'USD' ? 'USD' : 'EUR'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -981,7 +1001,7 @@ export default function SettingsPage() {
                   </button>
                 </div>
                 <h2 className="font-headline-md text-base font-black text-slate-900 dark:text-white leading-tight">
-                  {user.firstName} {user.lastName}
+                  {user.firstName ? user.firstName.split(' ')[0] : ''}
                 </h2>
                 <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold mt-1">{user.email}</p>
                 
@@ -994,7 +1014,7 @@ export default function SettingsPage() {
 
             {/* List Menu Section */}
             <div className="space-y-2">
-              <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-555 uppercase tracking-widest px-1">
+              <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1">
                 {language === 'tr' ? 'Hesap Ayarları' : 'Account Settings'}
               </h3>
               
@@ -1061,10 +1081,10 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
-                        {language === 'tr' ? 'Dil, Tema ve Para Birimi' : 'Language, Theme & Currency'}
+                        {language === 'tr' ? 'Bütçe, Dil, Tema ve Para Birimi' : 'Budget, Language, Theme & Currency'}
                       </p>
                       <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
-                        {language === 'tr' ? 'Tema (Açık/Koyu), dil ve para birimi tercihi' : 'Set active theme, language and currency'}
+                        {language === 'tr' ? 'Bütçe limiti, tema (Açık/Koyu), dil ve para birimi tercihi' : 'Set budget limit, theme, language and currency'}
                       </p>
                     </div>
                   </div>
@@ -1087,7 +1107,7 @@ export default function SettingsPage() {
                 <span className="material-symbols-outlined text-[18px]">logout</span>
                 <span>{language === 'tr' ? 'Çıkış Yap' : 'Logout'}</span>
               </button>
-              <p className="mt-4 text-center text-[10px] text-slate-400 dark:text-slate-555 font-bold opacity-60">Version 2.4.12 • Subly Secure Mobile</p>
+              <p className="mt-4 text-center text-[10px] text-slate-400 dark:text-slate-500 font-bold opacity-60">Version 2.4.12 • Subly Secure Mobile</p>
             </div>
           </div>
         )}

@@ -84,7 +84,7 @@ export const Sidebar = () => {
               <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-slate-950 rounded-full"></span>
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">{user.firstName} {user.lastName}</p>
+              <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">{user.firstName ? user.firstName.split(' ')[0] : ''}</p>
               <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">{user.email}</p>
             </div>
           </div>
